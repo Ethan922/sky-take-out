@@ -22,4 +22,6 @@ public interface EmployeeService {
     void changeStatus(Long id, Integer status);
 
     Employee getById(Integer id);
+
+    void modifyEmp(EmployeeDTO employeeDTO);
 }
