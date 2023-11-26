@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,4 +73,9 @@ public class EmployeeController {
         return Result.success();
     }
 
+    @PostMapping
+    public Result<EmployeeDTO> addEmp(@RequestBody EmployeeDTO employeeDTO){
+        employeeService.createEmp(employeeDTO);
+        return Result.success();
+    }
 }
