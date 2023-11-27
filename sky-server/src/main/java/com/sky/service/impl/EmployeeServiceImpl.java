@@ -128,7 +128,10 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public Employee getById(Long id) {
-        return employeeMapper.selectById(id);
+        Employee employee = employeeMapper.selectById(id);
+        //将返回的密码设置为****，保证安全性
+        employee.setPassword("*****");
+        return employee;
     }
 
     /**
