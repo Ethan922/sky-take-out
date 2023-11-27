@@ -151,7 +151,7 @@ public class EmployeeController {
      */
     @PutMapping("/editPassword")
     public Result editPassword(@RequestBody PasswordEditDTO passwordEditDTO){
-        log.info("修改密码，原密码:{},新密码:{},员工id:{}",passwordEditDTO.getOldPassword(),passwordEditDTO.getNewPassword(),passwordEditDTO.getEmpId());
+        log.info("修改密码，原密码:{},新密码:{}",passwordEditDTO.getOldPassword(),passwordEditDTO.getNewPassword());
         employeeService.editPasswod(passwordEditDTO);
         return Result.success();
     }
