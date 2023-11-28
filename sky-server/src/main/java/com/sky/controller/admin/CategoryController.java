@@ -80,4 +80,6 @@ public class CategoryController {
         List<Category> categories = categoryService.typeQuery(type);
         return Result.success(categories);
     }
+
+
 }
