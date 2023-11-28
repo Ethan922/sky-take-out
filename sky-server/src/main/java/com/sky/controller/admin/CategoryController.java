@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/admin/category")
@@ -55,10 +57,27 @@ public class CategoryController {
         return Result.success();
     }
 
+    /**
+     * 根据id删除分类
+     * @param id
+     * @return
+     */
     @DeleteMapping
     public Result deleteCategory(Long id){
         log.info("根据id删除分类");
         categoryService.deleteCategory(id);
         return Result.success();
+    }
+
+    /**
+     * 根据类型查询分类
+     * @param type
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<Category>> typeQuery(Integer type){
+        log.info("根据类型查询分类");
+        List<Category> categories = categoryService.typeQuery(type);
+        return Result.success(categories);
     }
 }
