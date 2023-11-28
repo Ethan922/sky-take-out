@@ -91,4 +91,17 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> typeQuery(Integer type) {
         return categoryMapper.typeQuery(type);
     }
+
+    /**
+     * 修改分类信息
+     * @param categoryDTO
+     */
+    @Override
+    public void editCategory(CategoryDTO categoryDTO) {
+        Category category=new Category();
+        BeanUtils.copyProperties(categoryDTO,category);
+        category.setUpdateUser(BaseContext.getCurrentId());
+        category.setUpdateTime(LocalDateTime.now());
+        categoryMapper.update(category);
+    }
 }

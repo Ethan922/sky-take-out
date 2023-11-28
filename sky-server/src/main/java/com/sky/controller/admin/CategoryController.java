@@ -38,7 +38,7 @@ public class CategoryController {
      * @return
      */
     @GetMapping("/page")
-    public Result<PageResult> page(CategoryPageQueryDTO categoryPageQueryDTO){
+    public Result<PageResult> page( CategoryPageQueryDTO categoryPageQueryDTO){
         log.info("分类分页查询");
         PageResult pageResult = categoryService.page(categoryPageQueryDTO);
         return Result.success(pageResult);
@@ -81,5 +81,15 @@ public class CategoryController {
         return Result.success(categories);
     }
 
-
+    /**
+     * 修改分类信息
+     * @param categoryDTO
+     * @return
+     */
+    @PutMapping
+    public Result editCategory(@RequestBody CategoryDTO categoryDTO){
+        log.info("修改分类信息，分类名:{},分类id:{}",categoryDTO.getName(),categoryDTO.getId());
+        categoryService.editCategory(categoryDTO);
+        return Result.success();
+    }
 }
