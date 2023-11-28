@@ -7,6 +7,7 @@ import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,14 @@ public class CategoryController {
         return Result.success();
     }
 
+    /**
+     * 分类分页查询
+     * @param categoryPageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
     public Result<PageResult> page(CategoryPageQueryDTO categoryPageQueryDTO){
+        log.info("分类分页查询");
         PageResult pageResult = categoryService.page(categoryPageQueryDTO);
         return Result.success(pageResult);
     }
@@ -48,4 +55,10 @@ public class CategoryController {
         return Result.success();
     }
 
+    @DeleteMapping
+    public Result deleteCategory(Long id){
+        log.info("根据id删除分类");
+        categoryService.deleteCategory(id);
+        return Result.success();
+    }
 }

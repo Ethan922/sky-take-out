@@ -3,7 +3,6 @@ package com.sky.service;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.result.PageResult;
-import org.springframework.stereotype.Service;
 
 public interface CategoryService {
 
@@ -12,4 +11,6 @@ public interface CategoryService {
     void changeStatus(Integer status,Long id);
 
     PageResult page(CategoryPageQueryDTO categoryPageQueryDTO);
+
+    void deleteCategory(Long id);
 }
