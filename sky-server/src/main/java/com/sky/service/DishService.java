@@ -13,4 +13,6 @@ public interface DishService {
     DishDTO getById(Long id);
 
     void editDish(DishDTO dishDTO);
+
+    void deleteDishes(Long[] ids);
 }

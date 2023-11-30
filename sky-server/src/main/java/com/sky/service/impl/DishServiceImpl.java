@@ -21,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
@@ -104,5 +105,18 @@ public class DishServiceImpl implements DishService {
             dishMapper.insertFlavor(flavor);
         }
 
+    }
+
+    /**
+     * 批量删除菜品，同时删除菜品的所有口味信息
+     * @param ids
+     */
+    @Override
+    @Transactional
+    public void deleteDishes(Long[] ids) {
+        dishMapper.deleteDishes(ids);
+        for (Long id : ids) {
+            dishMapper.deleteDishFlavor(id);
+        }
     }
 }

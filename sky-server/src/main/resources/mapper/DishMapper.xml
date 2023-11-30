@@ -27,6 +27,17 @@
         </set>
             where id=#{id}
     </update>
+    <delete id="deleteDishes">
+        <if test="ids!=null">
+            delete
+            from dish
+            where id in
+            <foreach collection="ids" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+        </if>
+
+    </delete>
 
     <select id="pageQuery" resultType="com.sky.entity.Dish">
         select *
