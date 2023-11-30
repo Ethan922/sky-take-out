@@ -6,14 +6,10 @@ import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.DocFlavor;
 import java.util.List;
 
 @Slf4j
@@ -78,6 +74,7 @@ public class DishController {
      */
     @DeleteMapping
     public Result deleteDishes(Long[] ids){
+        log.info("批量删除菜品{}",ids);
         dishService.deleteDishes(ids);
         return Result.success();
     }
@@ -89,7 +86,20 @@ public class DishController {
      */
     @GetMapping("/list")
     public Result<List<Dish>> getByCategoryId(Long id){
+        log.info("根据分类id查询菜品，id：{}",id);
         List<Dish> dishes = dishService.getByCategoryId(id);
         return Result.success(dishes);
+    }
+
+    /**
+     * 停售或启售菜品
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result changeStatus(@PathVariable Integer status,Long id){
+        log.info("停售或启售菜品");
+        dishService.changStatus(status,id);
+        return Result.success();
     }
 }

@@ -40,8 +40,7 @@
     </delete>
 
     <select id="pageQuery" resultType="com.sky.dto.DishDTO">
-        select dish.id, dish.name, dish.category_id, dish.price, dish.image, dish.description, dish.status, dish.update_time,
-        category.name category_name from dish,category
+        select dish.*,category.name  category_name from dish,category
         <where>
             category.id=category_id
             <if test="name!=null">and name like concat('%',#{name},'%')</if>

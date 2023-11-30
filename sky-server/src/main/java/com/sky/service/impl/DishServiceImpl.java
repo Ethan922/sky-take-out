@@ -129,4 +129,14 @@ public class DishServiceImpl implements DishService {
     public List<Dish> getByCategoryId(Long id) {
         return dishMapper.selectByCategoryId(id);
     }
+
+    /**
+     * 停售或启售菜品
+     * @param status
+     */
+    @Override
+    public void changStatus(Integer status,Long id) {
+        DishDTO dishDTO = DishDTO.builder().status(status).id(id).build();
+        dishMapper.updateDish(dishDTO);
+    }
 }

@@ -1,7 +1,11 @@
 package com.sky.dto;
 
 import com.sky.entity.DishFlavor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DishDTO implements Serializable {
 
     private Long id;
@@ -16,8 +23,6 @@ public class DishDTO implements Serializable {
     private String name;
     //菜品分类id
     private Long categoryId;
-    //菜品分类名称
-    private String categoryName;
     //菜品价格
     private BigDecimal price;
     //图片
@@ -28,6 +33,8 @@ public class DishDTO implements Serializable {
     private Integer status;
     //菜品信息更新时间
     private LocalDateTime updateTime;
+    //菜品分类名称
+    private String categoryName;
     //菜品信息更新人id
     private Long updateUser;
     //口味

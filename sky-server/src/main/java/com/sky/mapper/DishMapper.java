@@ -47,6 +47,13 @@ public interface DishMapper {
     DishDTO selectById(Long id);
 
     /**
+     * 根据分类id查询分类名称
+     * @param categoryId
+     * @return
+     */
+    @Select("select name from category where id=#{categoryId} ;")
+    String getCategoryNameById(Long categoryId);
+    /**
      * 根据菜品id查询菜品口味
      * @param id
      * @return
