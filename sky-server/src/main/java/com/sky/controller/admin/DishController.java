@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.print.DocFlavor;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -78,5 +80,16 @@ public class DishController {
     public Result deleteDishes(Long[] ids){
         dishService.deleteDishes(ids);
         return Result.success();
+    }
+
+    /**
+     * 根据分类id查询菜品
+     * @param id
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<Dish>> getByCategoryId(Long id){
+        List<Dish> dishes = dishService.getByCategoryId(id);
+        return Result.success(dishes);
     }
 }

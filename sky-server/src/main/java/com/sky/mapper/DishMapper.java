@@ -36,7 +36,7 @@ public interface DishMapper {
      * @param dishPageQueryDTO
      * @return
      */
-    Page<Dish> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+    Page<DishDTO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
 
     /**
      * 根据菜品id查询菜品信息
@@ -73,4 +73,12 @@ public interface DishMapper {
      * @param ids
      */
     void deleteDishes(Long[] ids);
+
+    /**
+     * 根据分类id查询菜品
+     * @param id
+     * @return
+     */
+    @Select("select * from dish where category_id=#{id};")
+    List<Dish> selectByCategoryId(Long id);
 }

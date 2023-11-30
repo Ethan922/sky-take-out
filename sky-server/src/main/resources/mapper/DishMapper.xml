@@ -39,11 +39,12 @@
 
     </delete>
 
-    <select id="pageQuery" resultType="com.sky.entity.Dish">
-        select *
-        from dish
+    <select id="pageQuery" resultType="com.sky.dto.DishDTO">
+        select dish.id, dish.name, dish.category_id, dish.price, dish.image, dish.description, dish.status, dish.update_time,
+        category.name category_name from dish,category
         <where>
-            <if test="name!=null">name like concat('%',#{name},'%')</if>
+            category.id=category_id
+            <if test="name!=null">and name like concat('%',#{name},'%')</if>
             <if test="categoryId!=null">and category_id=#{categoryId}</if>
             <if test="status!=null">and status=#{status}</if>
         </where>

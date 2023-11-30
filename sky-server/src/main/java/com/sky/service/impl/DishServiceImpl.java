@@ -67,7 +67,7 @@ public class DishServiceImpl implements DishService {
     @Override
     public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
         PageHelper.startPage(dishPageQueryDTO.getPage(),dishPageQueryDTO.getPageSize());
-        Page<Dish> page = dishMapper.pageQuery(dishPageQueryDTO);
+        Page<DishDTO> page = dishMapper.pageQuery(dishPageQueryDTO);
         return new PageResult(page.getTotal(),page.getResult());
     }
 
@@ -118,5 +118,15 @@ public class DishServiceImpl implements DishService {
         for (Long id : ids) {
             dishMapper.deleteDishFlavor(id);
         }
+    }
+
+    /**
+     * 根据分类id查询菜品
+     * @param id
+     * @return
+     */
+    @Override
+    public List<Dish> getByCategoryId(Long id) {
+        return dishMapper.selectByCategoryId(id);
     }
 }
