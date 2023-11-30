@@ -11,15 +11,13 @@ import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
-import com.sky.exception.AccountLockedException;
-import com.sky.exception.AccountNotFoundException;
-import com.sky.exception.PasswordEditFailedException;
-import com.sky.exception.PasswordErrorException;
+import com.sky.exception.*;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import io.swagger.models.auth.In;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -76,24 +74,28 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void createEmp(EmployeeDTO employeeDTO) {
-        Employee employee = new Employee();
-        //对象属性拷贝
-        BeanUtils.copyProperties(employeeDTO, employee);
+        try {
+            Employee employee = new Employee();
+            //对象属性拷贝
+            BeanUtils.copyProperties(employeeDTO, employee);
 
-        //添加操作时间
+            //添加操作时间
 //        employee.setCreateTime(LocalDateTime.now());
 //        employee.setUpdateTime(LocalDateTime.now());
 
-        //设置默认密码
-        employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+            //设置默认密码
+            employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
 
-        //设置状态码
-        employee.setStatus(StatusConstant.ENABLE);
+            //设置状态码
+            employee.setStatus(StatusConstant.ENABLE);
 
-        //设置操作人ID
+            //设置操作人ID
 //        employee.setUpdateUser(BaseContext.getCurrentId());
 //        employee.setCreateUser(BaseContext.getCurrentId());
-        employeeMapper.insertEmp(employee);
+            employeeMapper.insertEmp(employee);
+        } catch (Exception e) {
+            throw new EmployeeUsernameDuplicateException(MessageConstant.EMPLOYEE_USERNAME_DUPLICATE);
+        }
     }
 
     @Override

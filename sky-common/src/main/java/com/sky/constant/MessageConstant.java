@@ -24,5 +24,7 @@ public class MessageConstant {
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
     public static final String DISH_NAME_DUPLICATE = "菜品名称不能重复";
+    public static final String CATEGORY_NAME_DUPLICATE = "分类名称不能重复";
+    public static final String EMPLOYEE_USERNAME_DUPLICATE = "员工账号名不能重复";
 
 }
