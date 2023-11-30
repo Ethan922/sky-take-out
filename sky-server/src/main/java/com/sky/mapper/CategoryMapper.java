@@ -51,4 +51,7 @@ public interface CategoryMapper {
      * @return
      */
     List<Category> typeQuery(Integer type);
+
+    @Delete("delete from dish where category_id=#{id};")
+    void deleteDishesByCategoryId(Long id);
 }

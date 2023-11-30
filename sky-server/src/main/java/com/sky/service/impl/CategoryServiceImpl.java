@@ -14,16 +14,19 @@ import com.sky.exception.CategoryNameDuplicateException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.result.PageResult;
 import com.sky.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.plaf.basic.BasicSeparatorUI;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
@@ -83,12 +86,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
-     * 根据id删除分类
+     * 根据id删除分类,同时删除该分类下的菜品
      * @param id
      */
     @Override
+    @Transactional
     public void deleteCategory(Long id) {
         categoryMapper.delete(id);
+        log.info("删除该分类下的所有菜品，保证数据的一致性");
+        categoryMapper.deleteDishesByCategoryId(id);
     }
 
     /**
