@@ -142,12 +142,16 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employeeDTO
      */
     @Override
-    public void modifyEmp(EmployeeDTO employeeDTO) {
-        Employee employee = new Employee();
-        BeanUtils.copyProperties(employeeDTO, employee);
+    public void editEmp(EmployeeDTO employeeDTO) {
+        try {
+            Employee employee = new Employee();
+            BeanUtils.copyProperties(employeeDTO, employee);
 //        employee.setUpdateUser(BaseContext.getCurrentId());
 //        employee.setUpdateTime(LocalDateTime.now());
-        employeeMapper.update(employee);
+            employeeMapper.update(employee);
+        } catch (Exception e) {
+            throw new EmployeeUsernameDuplicateException(MessageConstant.EMPLOYEE_USERNAME_DUPLICATE);
+        }
     }
 
     /**

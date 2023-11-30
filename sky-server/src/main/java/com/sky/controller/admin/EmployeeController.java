@@ -142,7 +142,7 @@ public class EmployeeController {
     @ApiOperation("编辑员工信息")
     public Result modifyEmp(@RequestBody EmployeeDTO employeeDTO){
         log.info("编辑员工信息，员工id：{}",employeeDTO.getId());
-        employeeService.modifyEmp(employeeDTO);
+        employeeService.editEmp(employeeDTO);
          return Result.success();
     }
 

@@ -28,6 +28,8 @@ public class DishDTO implements Serializable {
     private Integer status;
     //菜品信息更新时间
     private LocalDateTime updateTime;
+    //菜品信息更新人id
+    private Long updateUser;
     //口味
     private List<DishFlavor> flavors = new ArrayList<>();
 

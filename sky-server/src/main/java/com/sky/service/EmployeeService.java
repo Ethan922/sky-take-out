@@ -24,7 +24,7 @@ public interface EmployeeService {
 
     Employee getById(Long id);
 
-    void modifyEmp(EmployeeDTO employeeDTO);
+    void editEmp(EmployeeDTO employeeDTO);
 
     void editPasswod(PasswordEditDTO passwordEditDTO);
 }

@@ -55,4 +55,16 @@ public class DishController {
         DishDTO dishDTO = dishService.getById(id);
         return Result.success(dishDTO);
     }
+
+    /**
+     * 修改菜品信息
+     * @param dishDTO
+     * @return
+     */
+    @PutMapping
+    public Result editDish(@RequestBody DishDTO dishDTO){
+        log.info("修改菜品信息，菜品名：{}",dishDTO.getName());
+        dishService.editDish(dishDTO);
+        return Result.success();
+    }
 }

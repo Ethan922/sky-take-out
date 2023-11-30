@@ -11,4 +11,6 @@ public interface DishService {
     PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
 
     DishDTO getById(Long id);
+
+    void editDish(DishDTO dishDTO);
 }
