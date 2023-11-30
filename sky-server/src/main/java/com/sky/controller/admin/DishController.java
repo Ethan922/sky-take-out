@@ -43,4 +43,16 @@ public class DishController {
         PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);
         return Result.success(pageResult);
     }
+
+    /**
+     * 根据id查询菜品信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<DishDTO> getById(@PathVariable Long id){
+        log.info("根据菜品id查询菜品信息，id:{}",id);
+        DishDTO dishDTO = dishService.getById(id);
+        return Result.success(dishDTO);
+    }
 }

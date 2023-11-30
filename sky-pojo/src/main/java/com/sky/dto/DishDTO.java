@@ -4,6 +4,7 @@ import com.sky.entity.DishFlavor;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public class DishDTO implements Serializable {
     private String name;
     //菜品分类id
     private Long categoryId;
+    //菜品分类名称
+    private String categoryName;
     //菜品价格
     private BigDecimal price;
     //图片
@@ -23,6 +26,8 @@ public class DishDTO implements Serializable {
     private String description;
     //0 停售 1 起售
     private Integer status;
+    //菜品信息更新时间
+    private LocalDateTime updateTime;
     //口味
     private List<DishFlavor> flavors = new ArrayList<>();
 

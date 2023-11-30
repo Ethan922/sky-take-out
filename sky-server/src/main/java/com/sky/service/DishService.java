@@ -9,4 +9,6 @@ public interface DishService {
     void createDish(DishDTO dishDTO);
 
     PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    DishDTO getById(Long id);
 }
