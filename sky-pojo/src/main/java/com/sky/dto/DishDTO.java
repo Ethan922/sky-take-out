@@ -31,12 +31,6 @@ public class DishDTO implements Serializable {
     private String description;
     //0 停售 1 起售
     private Integer status;
-    //菜品信息更新时间
-    private LocalDateTime updateTime;
-    //菜品分类名称
-    private String categoryName;
-    //菜品信息更新人id
-    private Long updateUser;
     //口味
     private List<DishFlavor> flavors = new ArrayList<>();
 

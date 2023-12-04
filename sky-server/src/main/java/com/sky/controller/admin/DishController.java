@@ -6,6 +6,7 @@ import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
+import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,10 +50,10 @@ public class DishController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<DishDTO> getById(@PathVariable Long id){
+    public Result<DishVO> getById(@PathVariable Long id){
         log.info("根据菜品id查询菜品信息，id:{}",id);
-        DishDTO dishDTO = dishService.getById(id);
-        return Result.success(dishDTO);
+        DishVO dishVO = dishService.getById(id);
+        return Result.success(dishVO);
     }
 
     /**

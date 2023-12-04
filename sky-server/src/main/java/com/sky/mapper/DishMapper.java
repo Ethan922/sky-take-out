@@ -40,16 +40,16 @@ public interface DishMapper {
      * @return
      */
     @Select("select dish.id, dish.name, dish.category_id, dish.price, dish.image, dish.description, dish.status, dish.update_time, category.name category_name from dish,category where dish.id=#{id} and category_id=category.id;")
-    DishDTO selectById(Long id);
+    DishVO selectById(Long id);
 
 
 
     /**
      * 更新菜品信息
-     * @param dishDTO
+     * @param dish
      */
     @AutoFill(OperationType.UPDATE)
-    void updateDish(DishDTO dishDTO);
+    void updateDish(Dish dish);
 
 
     /**

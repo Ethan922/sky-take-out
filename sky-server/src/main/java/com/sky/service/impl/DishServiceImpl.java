@@ -17,6 +17,7 @@ import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,13 +76,13 @@ public class DishServiceImpl implements DishService {
      * @return
      */
     @Override
-    public DishDTO getById(Long id) {
-        DishDTO dishDTO = dishMapper.selectById(id);
-        if (dishDTO != null) {
+    public DishVO getById(Long id) {
+        DishVO dishVO = dishMapper.selectById(id);
+        if (dishVO != null) {
             List<DishFlavor> dishFlavors = dishFlavorMapper.selectFlavor(id);
-            dishDTO.setFlavors(dishFlavors);
+            dishVO.setFlavors(dishFlavors);
         }
-        return dishDTO;
+        return dishVO;
     }
 
     /**
@@ -93,7 +94,9 @@ public class DishServiceImpl implements DishService {
     @Transactional
     public void editDish(DishDTO dishDTO) {
         try {
-            dishMapper.updateDish(dishDTO);
+        Dish dish=new Dish();
+        BeanUtils.copyProperties(dishDTO,dish);
+            dishMapper.updateDish(dish);
         } catch (Exception e) {
             throw new DishNameDuplicateException(MessageConstant.DISH_NAME_DUPLICATE);
         }
@@ -142,7 +145,7 @@ public class DishServiceImpl implements DishService {
      */
     @Override
     public void changStatus(Integer status, Long id) {
-        DishDTO dishDTO = DishDTO.builder().status(status).id(id).build();
-        dishMapper.updateDish(dishDTO);
+        Dish dish = Dish.builder().status(status).id(id).build();
+        dishMapper.updateDish(dish);
     }
 }
