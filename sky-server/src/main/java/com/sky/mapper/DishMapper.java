@@ -26,11 +26,6 @@ public interface DishMapper {
     void insert(Dish dish);
 
 
-    /**
-     * 新增菜品时插入菜品口味
-     * @param dishFlavor
-     */
-    void insertFlavor(DishFlavor dishFlavor);
 
     /**
      * 菜品分页查询
@@ -47,20 +42,7 @@ public interface DishMapper {
     @Select("select dish.id, dish.name, dish.category_id, dish.price, dish.image, dish.description, dish.status, dish.update_time, category.name category_name from dish,category where dish.id=#{id} and category_id=category.id;")
     DishDTO selectById(Long id);
 
-    /**
-     * 根据分类id查询分类名称
-     * @param categoryId
-     * @return
-     */
-    @Select("select name from category where id=#{categoryId} ;")
-    String getCategoryNameById(Long categoryId);
-    /**
-     * 根据菜品id查询菜品口味
-     * @param id
-     * @return
-     */
-    @Select("select * from dish_flavor where dish_id=#{id};")
-    List<DishFlavor> selectFlavor(Long id);
+
 
     /**
      * 更新菜品信息
@@ -69,12 +51,6 @@ public interface DishMapper {
     @AutoFill(OperationType.UPDATE)
     void updateDish(DishDTO dishDTO);
 
-    /**
-     * 更新菜品时根据菜品id删除所有口味信息
-     * @param id
-     */
-    @Delete("delete from dish_flavor where dish_id=#{id}")
-    void deleteDishFlavor(Long id);
 
     /**
      * 批量删除菜品
@@ -84,9 +60,17 @@ public interface DishMapper {
 
     /**
      * 根据分类id查询菜品
-     * @param id
+     * @param categoryId
      * @return
      */
-    @Select("select * from dish where category_id=#{id};")
-    List<Dish> selectByCategoryId(Long id);
+    @Select("select * from dish where category_id=#{categoryId};")
+    List<Dish> selectByCategoryId(Long categoryId);
+
+    /**
+     * 根据菜品名称查询菜品shuliang
+     * @param dishName
+     * @return
+     */
+    @Select("select count(*) from dish where name=#{dishName};")
+    Long selectByDishName(String dishName);
 }
