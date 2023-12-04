@@ -9,9 +9,12 @@ import com.sky.context.BaseContext;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
+import com.sky.entity.Dish;
 import com.sky.enumeration.OperationType;
 import com.sky.exception.CategoryNameDuplicateException;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.CategoryMapper;
+import com.sky.mapper.DishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+    @Autowired
+    private DishMapper dishMapper;
     /**
      * 新增分类
      *
@@ -92,9 +97,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(Long id) {
+        //判断该分类下是否关联了菜品
+        List<Dish> dishes = dishMapper.selectByCategoryId(id);
+        if (dishes.size()!=0){
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
+        }
         categoryMapper.delete(id);
-        log.info("删除该分类下的所有菜品，保证数据的一致性");
-        categoryMapper.deleteDishesByCategoryId(id);
     }
 
     /**
