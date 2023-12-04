@@ -16,6 +16,7 @@ import com.sky.mapper.DishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.utils.AliOssUtil;
+import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -38,6 +39,7 @@ public class DishServiceImpl implements DishService {
      * 新增菜品
      * @param dishDTO
      */
+    @Transactional//保证菜品信息和口味数据均插入成功
     @Override
     public void createDish(DishDTO dishDTO) {
         try {
@@ -46,9 +48,11 @@ public class DishServiceImpl implements DishService {
             dish.setStatus(StatusConstant.ENABLE);
             dishMapper.insert(dish);
             List<DishFlavor> flavors = dishDTO.getFlavors();
-            for (DishFlavor flavor : flavors) {
-                flavor.setDishId(dish.getId());
-                dishMapper.insertFlavor(flavor);
+            if(flavors!=null&&flavors.size()>0){
+                for (DishFlavor flavor : flavors) {
+                    flavor.setDishId(dish.getId());
+                    dishMapper.insertFlavor(flavor);
+                }
             }
         } catch (Exception e) {
             throw new DishNameDuplicateException(MessageConstant.DISH_NAME_DUPLICATE);
@@ -67,7 +71,7 @@ public class DishServiceImpl implements DishService {
     @Override
     public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
         PageHelper.startPage(dishPageQueryDTO.getPage(),dishPageQueryDTO.getPageSize());
-        Page<DishDTO> page = dishMapper.pageQuery(dishPageQueryDTO);
+        Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);
         return new PageResult(page.getTotal(),page.getResult());
     }
 
@@ -79,8 +83,10 @@ public class DishServiceImpl implements DishService {
     @Override
     public DishDTO getById(Long id) {
         DishDTO dishDTO = dishMapper.selectById(id);
-        List<DishFlavor> dishFlavors = dishMapper.selectFlavor(id);
-        dishDTO.setFlavors(dishFlavors);
+        if (dishDTO!=null){
+            List<DishFlavor> dishFlavors = dishMapper.selectFlavor(id);
+            dishDTO.setFlavors(dishFlavors);
+        }
         return dishDTO;
     }
 

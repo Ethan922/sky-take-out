@@ -39,10 +39,9 @@
 
     </delete>
 
-    <select id="pageQuery" resultType="com.sky.dto.DishDTO">
-        select dish.*,category.name  category_name from dish,category
+    <select id="pageQuery" resultType="com.sky.vo.DishVO">
+        select dish.*,category.name  category_name from dish left outer join category on category.id=category_id
         <where>
-            category.id=category_id
             <if test="name!=null">and name like concat('%',#{name},'%')</if>
             <if test="categoryId!=null">and category_id=#{categoryId}</if>
             <if test="status!=null">and status=#{status}</if>
