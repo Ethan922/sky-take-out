@@ -148,12 +148,12 @@ public class DishServiceImpl implements DishService {
     /**
      * 根据分类id查询菜品
      *
-     * @param id
+     * @param categoryId
      * @return
      */
     @Override
-    public List<Dish> getByCategoryId(Long id) {
-        return dishMapper.selectByCategoryId(id);
+    public List<Dish> getByCategoryId(Long categoryId) {
+        return dishMapper.selectByCategoryId(categoryId);
     }
 
     /**
