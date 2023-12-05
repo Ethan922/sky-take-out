@@ -1,6 +1,8 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
 import com.sky.annotation.AutoFill;
+import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.SetmealVO;
@@ -25,4 +27,7 @@ public interface SetmealMapper {
      */
     @Select("select s.*,c.name categoryName from setmeal s left outer join category c on s.category_id = c.id where s.id=#{id};")
     SetmealVO selectBySetmealId(Long id);
+
+    @Select("select s.*,c.name categoryName from setmeal s left outer join category c on s.category_id = c.id")
+    Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
 }
