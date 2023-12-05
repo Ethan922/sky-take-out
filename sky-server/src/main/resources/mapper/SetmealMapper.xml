@@ -8,4 +8,14 @@
                              update_user)
         values (#{categoryId},#{name},#{price},#{description},#{image},#{createTime},#{updateTime},#{createUser},#{updateUser});
     </insert>
+    <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
+        select s.*, c.name categoryName
+        from setmeal s
+                 left outer join category c on s.category_id = c.id
+        <where>
+            <if test="name!=null">s.name like concat('%',#{name},'%')</if>
+            <if test="categoryId!=null">and s.category_id=#{categoryId}</if>
+            <if test="status!=null">and s.status=#{status}</if>
+        </where>
+    </select>
 </mapper>

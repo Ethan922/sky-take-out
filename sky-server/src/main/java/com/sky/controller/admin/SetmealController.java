@@ -43,8 +43,8 @@ public class SetmealController {
      */
     @GetMapping("/page")
     public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO){
-        setmealService.page(setmealPageQueryDTO);
-        return Result.success();
+        PageResult pageResult = setmealService.page(setmealPageQueryDTO);
+        return Result.success(pageResult);
     }
 
 }
