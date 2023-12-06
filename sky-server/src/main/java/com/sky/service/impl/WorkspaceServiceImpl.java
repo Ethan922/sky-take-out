@@ -29,8 +29,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public SetmealOverViewVO overviewSetmeals() {
-        Integer discontinued = setmealMapper.selectCountOfDisableSetmeals();
-        Integer sold = setmealMapper.selectCountOfEnableSetmeals();
+        Integer discontinued = setmealMapper.selectCountOfSetmealsByStatus(StatusConstant.DISABLE);
+        Integer sold = setmealMapper.selectCountOfSetmealsByStatus(StatusConstant.ENABLE);
         return SetmealOverViewVO.builder().discontinued(discontinued).sold(sold).build();
     }
 
