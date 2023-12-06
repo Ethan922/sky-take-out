@@ -78,4 +78,12 @@ public interface DishMapper {
      */
     @Select("select id from dish where name=#{dishName};")
     Long selectDishIdByDishName(String dishName);
+
+    /**
+     * 查询起售或未启售菜品的数量
+     * @param status
+     * @return
+     */
+    @Select("select count(*) from dish where status=#{status};")
+    Integer selectCountOfDisableDishes(Integer status);
 }
