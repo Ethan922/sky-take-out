@@ -18,4 +18,5 @@ public interface SetmealService {
     void changstatus(Integer status, Long id);
 
     void deleteSetmeals(Long[] ids);
+
 }

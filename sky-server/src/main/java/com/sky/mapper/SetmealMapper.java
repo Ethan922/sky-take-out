@@ -60,4 +60,16 @@ public interface SetmealMapper {
      */
     @Select("select count(*) from setmeal where category_id=#{categoryId};")
     int selectByCategoryId(Long categoryId);
+
+    /**
+     * 查询未启售套餐的数量
+     */
+    @Select("select count(*) from setmeal where status=0;")
+    Integer selectCountOfDisableSetmeals();
+
+    /**
+     * 查询启售套餐的数量
+     */
+    @Select("select count(*) from setmeal where status=1;")
+    Integer selectCountOfEnableSetmeals();
 }
