@@ -34,4 +34,14 @@ public interface SetmealMapper {
      * @return
      */
     Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    @Select("select id from setmeal where name=#{setmealName};")
+    Long selectSetmealIdBySetmealName(String setmealName);
+
+    /**
+     * 修改套餐的基本信息
+     * @param setmeal
+     */
+    @AutoFill(OperationType.UPDATE)
+    void update(Setmeal setmeal);
 }

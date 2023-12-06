@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.github.pagehelper.Page;
+import com.google.j2objc.annotations.RetainedWith;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
@@ -47,4 +48,16 @@ public class SetmealController {
         return Result.success(pageResult);
     }
 
+    /**
+     * 修改套餐信息
+     * @param setmealVO
+     * @return
+     */
+    @PutMapping
+    public Result editSetmeal(@RequestBody SetmealVO setmealVO){
+        log.info("修改套餐信息，id：{}",setmealVO.getId());
+        setmealService.editSetmeal(setmealVO);
+        return Result.success();
+
+    }
 }

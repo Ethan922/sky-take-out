@@ -12,4 +12,6 @@ public interface SetmealService {
     SetmealVO selectBySetmealId(Long id);
 
     PageResult page(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    void editSetmeal(SetmealVO setmealVO);
 }
