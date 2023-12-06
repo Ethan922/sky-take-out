@@ -36,6 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private DishMapper dishMapper;
+
     /**
      * 新增分类
      *
@@ -43,18 +44,14 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public void createCategory(CategoryDTO categoryDTO) {
-        try {
-            Category category = new Category();
-            BeanUtils.copyProperties(categoryDTO, category);
-            category.setStatus(StatusConstant.ENABLE);
-//        category.setCreateUser(BaseContext.getCurrentId());
-//        category.setCreateTime(LocalDateTime.now());
-//        category.setUpdateTime(LocalDateTime.now());
-//        category.setUpdateUser(BaseContext.getCurrentId());
-            categoryMapper.insert(category);
-        } catch (Exception e) {
+        Long categoryId = categoryMapper.selectCategorIdByCategoryName(categoryDTO.getName());
+        if (categoryId != null) {
             throw new CategoryNameDuplicateException(MessageConstant.CATEGORY_NAME_DUPLICATE);
         }
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDTO, category);
+        category.setStatus(StatusConstant.ENABLE);
+        categoryMapper.insert(category);
     }
 
     /**
@@ -77,13 +74,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 分类分页查询
+     *
      * @param categoryPageQueryDTO
      * @return
      */
     @Override
     public PageResult page(CategoryPageQueryDTO categoryPageQueryDTO) {
         PageHelper.startPage(categoryPageQueryDTO.getPage(), categoryPageQueryDTO.getPageSize());
-        Page<Category> page=categoryMapper.pageQuery(categoryPageQueryDTO);
+        Page<Category> page = categoryMapper.pageQuery(categoryPageQueryDTO);
 
         return PageResult.builder()
                 .total(page.getTotal())
@@ -92,6 +90,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 根据id删除分类,同时删除该分类下的菜品
+     *
      * @param id
      */
     @Override
@@ -99,7 +98,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Long id) {
         //判断该分类下是否关联了菜品
         List<Dish> dishes = dishMapper.selectByCategoryId(id);
-        if (dishes.size()!=0){
+        if (dishes.size() != 0) {
             throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
         }
         categoryMapper.delete(id);
@@ -107,6 +106,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 根据类型查询分类
+     *
      * @param type
      * @return
      */
@@ -117,18 +117,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 修改分类信息
+     *
      * @param categoryDTO
      */
     @Override
     public void editCategory(CategoryDTO categoryDTO) {
-        try {
-            Category category=new Category();
-            BeanUtils.copyProperties(categoryDTO,category);
-//        category.setUpdateUser(BaseContext.getCurrentId());
-//        category.setUpdateTime(LocalDateTime.now());
-            categoryMapper.update(category);
-        } catch (Exception e) {
+        Long categoryId = categoryMapper.selectCategorIdByCategoryName(categoryDTO.getName());
+        if (categoryId != null && categoryId != categoryDTO.getId()) {
             throw new CategoryNameDuplicateException(MessageConstant.CATEGORY_NAME_DUPLICATE);
         }
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDTO, category);
+        categoryMapper.update(category);
     }
 }
