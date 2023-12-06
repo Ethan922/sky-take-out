@@ -14,4 +14,6 @@ public interface SetmealService {
     PageResult page(SetmealPageQueryDTO setmealPageQueryDTO);
 
     void editSetmeal(SetmealVO setmealVO);
+
+    void changstatus(Integer status, Long id);
 }

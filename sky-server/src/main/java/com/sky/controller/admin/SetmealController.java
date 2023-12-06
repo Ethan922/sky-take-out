@@ -58,6 +58,12 @@ public class SetmealController {
         log.info("修改套餐信息，id：{}",setmealVO.getId());
         setmealService.editSetmeal(setmealVO);
         return Result.success();
+    }
 
+    @PostMapping("/status/{status}")
+    public Result changStatus(@PathVariable Integer status,Long id){
+        log.info("启售或停售套餐，id：{}，status：{}",id,status);
+        setmealService.changstatus(status,id);
+        return Result.success();
     }
 }
