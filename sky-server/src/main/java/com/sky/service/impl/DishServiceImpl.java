@@ -17,6 +17,7 @@ import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +45,8 @@ public class DishServiceImpl implements DishService {
     @Override
     public void createDish(DishDTO dishDTO) {
         //判断菜品名称是否重复
-        if (dishMapper.selectByDishName(dishDTO.getName()) != 0) {
+        if (dishMapper.selectDishIdByDishName(dishDTO.getName()) != null) {
+            //根据修改的菜品名称查询菜品id，如果菜品id不为空,说明菜品名与表中其他菜品名重复
             throw new DishNameDuplicateException(MessageConstant.DISH_NAME_DUPLICATE);
         }
         Dish dish = new Dish();
@@ -97,16 +99,17 @@ public class DishServiceImpl implements DishService {
     @Override
     @Transactional
     public void editDish(DishDTO dishDTO) {
-        try {
-            Dish dish = new Dish();
-            BeanUtils.copyProperties(dishDTO, dish);
-            dishMapper.updateDish(dish);
-        } catch (Exception e) {
+        Long dishId = dishMapper.selectDishIdByDishName(dishDTO.getName());
+        if (dishId!=null&&dishId!=dishDTO.getId()) {
+            //根据修改的菜品名称查询菜品id，如果菜品id不为空，并且不等于菜品原来的id，说明修改的名称与表中其他菜品的名称重复
             throw new DishNameDuplicateException(MessageConstant.DISH_NAME_DUPLICATE);
         }
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        dishMapper.updateDish(dish);
         log.info("修改菜品信息前，删除菜品口味信息");
-        Long[] ids = {dishDTO.getId()};
-        dishFlavorMapper.deleteDishFlavor(ids);
+        Long[] dishIds = {dishDTO.getId()};
+        dishFlavorMapper.deleteDishFlavor(dishIds);
         List<DishFlavor> flavors = dishDTO.getFlavors();
         if (flavors != null && flavors.size() > 0) {
             log.info("重新插入菜品口味信息");

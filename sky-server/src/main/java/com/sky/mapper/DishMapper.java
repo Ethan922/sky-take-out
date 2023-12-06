@@ -71,6 +71,6 @@ public interface DishMapper {
      * @param dishName
      * @return
      */
-    @Select("select count(*) from dish where name=#{dishName};")
-    Long selectByDishName(String dishName);
+    @Select("select id from dish where name=#{dishName};")
+    Long selectDishIdByDishName(String dishName);
 }
