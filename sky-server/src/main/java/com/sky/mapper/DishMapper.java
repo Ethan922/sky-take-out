@@ -85,5 +85,5 @@ public interface DishMapper {
      * @return
      */
     @Select("select count(*) from dish where status=#{status};")
-    Integer selectCountOfDisableDishes(Integer status);
+    Integer selectCountOfDishesByStatus(Integer status);
 }

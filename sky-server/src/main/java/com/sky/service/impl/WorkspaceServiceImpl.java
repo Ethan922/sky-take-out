@@ -40,8 +40,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public DishOverViewVO overviewDishes() {
-        Integer discontinued = dishMapper.selectCountOfDisableDishes(StatusConstant.DISABLE);
-        Integer sold = dishMapper.selectCountOfDisableDishes(StatusConstant.ENABLE);
+        Integer discontinued = dishMapper.selectCountOfDishesByStatus(StatusConstant.DISABLE);
+        Integer sold = dishMapper.selectCountOfDishesByStatus(StatusConstant.ENABLE);
         return DishOverViewVO.builder().discontinued(discontinued).sold(sold).build();
     }
 }
