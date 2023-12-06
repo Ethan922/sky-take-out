@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface SetmealMapper {
 
@@ -50,4 +52,12 @@ public interface SetmealMapper {
      * @param ids
      */
     void deleteSetmeals(Long[] ids);
+
+    /**
+     * 根据分类id查询该分类下的套餐数量
+     * @param categoryId
+     * @return
+     */
+    @Select("select count(*) from setmeal where category_id=#{categoryId};")
+    int selectByCategoryId(Long categoryId);
 }

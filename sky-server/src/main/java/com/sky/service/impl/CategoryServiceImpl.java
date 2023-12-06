@@ -15,6 +15,7 @@ import com.sky.exception.CategoryNameDuplicateException;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+    @Autowired
+    private SetmealMapper setmealMapper;
     @Autowired
     private DishMapper dishMapper;
 
@@ -65,8 +68,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = Category.builder()
                 .status(status)
                 .id(id)
-//                .updateTime(LocalDateTime.now())
-//                .updateUser(BaseContext.getCurrentId())
                 .build();
 
         categoryMapper.update(category);
@@ -100,6 +101,10 @@ public class CategoryServiceImpl implements CategoryService {
         List<Dish> dishes = dishMapper.selectByCategoryId(id);
         if (dishes.size() != 0) {
             throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
+        }
+        int setmealCount = setmealMapper.selectByCategoryId(id);
+        if (setmealCount!=0){
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
         }
         categoryMapper.delete(id);
     }
