@@ -35,12 +35,24 @@
     </delete>
 
     <select id="pageQuery" resultType="com.sky.vo.DishVO">
-        select dish.*,category.name  category_name from dish left outer join category on category.id=category_id
+        select d.*,c.name  category_name from dish d left outer join category c on c.id=category_id
         <where>
-            <if test="name!=null">and name like concat('%',#{name},'%')</if>
-            <if test="categoryId!=null">and category_id=#{categoryId}</if>
-            <if test="status!=null">and status=#{status}</if>
+            <if test="name!=null">and d.name like concat('%',#{name},'%')</if>
+            <if test="categoryId!=null">and d.category_id=#{categoryId}</if>
+            <if test="status!=null">and d.status=#{status}</if>
         </where>
         order by update_time desc
     </select>
+
+
+    <select id="selectStatusByDishIds" resultType="Integer">
+        select status
+        from dish
+        where id in
+        <foreach collection="dishIds" separator="," open="(" close=")" item="dishId">
+            #{dishId}
+        </foreach>
+    </select>
+
+
 </mapper>

@@ -8,7 +8,10 @@ import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
 import com.sky.exception.SetmealNameDulpicateException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
@@ -30,7 +33,11 @@ public class SetmealServiceImpl implements SetmealService {
     private SetmealMapper setmealMapper;
 
     @Autowired
+    private DishMapper dishMapper;
+
+    @Autowired
     private SetmealDishMapper setmealDishMapper;
+
     /**
      * 新增套餐信息
      * @param setmealDTO
@@ -116,7 +123,37 @@ public class SetmealServiceImpl implements SetmealService {
      */
     @Override
     public void changstatus(Integer status, Long id) {
+        //如果是起售套餐,判断套餐中是否包含未启售的菜品
+        if (status==StatusConstant.ENABLE) {
+            Long[] dishIds = setmealDishMapper.selectDishIdsBySetmealId(id);
+            Integer[] dishStatuses = dishMapper.selectStatusByDishIds(dishIds);
+            for (Integer dishStatus : dishStatuses) {
+                if (dishStatus==StatusConstant.DISABLE){
+                    throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                }
+            }
+        }
         Setmeal setmeal = Setmeal.builder().status(status).id(id).build();
         setmealMapper.update(setmeal);
+    }
+
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    @Override
+    @Transactional
+    public void deleteSetmeals(Long[] ids) {
+        //判断套餐是否在启售中
+        for (Long id : ids) {
+            SetmealVO setmealVO = setmealMapper.selectBySetmealId(id);
+            if (setmealVO.getStatus()==StatusConstant.ENABLE){
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+            }
+        }
+        //删除套餐的基本信息
+        setmealMapper.deleteSetmeals(ids);
+        //删除套餐关联的套餐
+        setmealDishMapper.deleteDishesBySetmealId(ids);
     }
 }

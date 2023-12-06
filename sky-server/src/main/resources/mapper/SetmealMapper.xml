@@ -35,4 +35,13 @@
         </set>
         where id =#{id}
     </update>
+
+    <delete id="deleteSetmeals">
+        delete
+        from setmeal
+        where id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

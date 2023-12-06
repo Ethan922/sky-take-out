@@ -42,7 +42,12 @@ public interface DishMapper {
     @Select("select dish.id, dish.name, dish.category_id, dish.price, dish.image, dish.description, dish.status, dish.update_time, category.name category_name from dish,category where dish.id=#{id} and category_id=category.id;")
     DishVO selectById(Long id);
 
-
+    /**
+     * 根据菜品id批量查询菜品状态
+     * @param dishIds
+     * @return
+     */
+    Integer[] selectStatusByDishIds(Long[] dishIds);
 
     /**
      * 更新菜品信息
