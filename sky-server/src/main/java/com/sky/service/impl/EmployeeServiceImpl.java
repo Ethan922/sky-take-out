@@ -51,7 +51,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         //密码比对
-        // TODO 后期需要进行md5加密，然后再进行比对
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!password.equals(employee.getPassword())) {
             //密码错误
@@ -74,28 +73,21 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void createEmp(EmployeeDTO employeeDTO) {
-        try {
-            Employee employee = new Employee();
-            //对象属性拷贝
-            BeanUtils.copyProperties(employeeDTO, employee);
-
-            //添加操作时间
-//        employee.setCreateTime(LocalDateTime.now());
-//        employee.setUpdateTime(LocalDateTime.now());
-
-            //设置默认密码
-            employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-
-            //设置状态码
-            employee.setStatus(StatusConstant.ENABLE);
-
-            //设置操作人ID
-//        employee.setUpdateUser(BaseContext.getCurrentId());
-//        employee.setCreateUser(BaseContext.getCurrentId());
-            employeeMapper.insertEmp(employee);
-        } catch (Exception e) {
+        Long empId = employeeMapper.selectEmpIdByUername(employeeDTO.getUsername());
+        if (empId!=null){
             throw new EmployeeUsernameDuplicateException(MessageConstant.EMPLOYEE_USERNAME_DUPLICATE);
         }
+        Employee employee = new Employee();
+        //对象属性拷贝
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        //设置默认密码
+        employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+
+        //设置状态码
+        employee.setStatus(StatusConstant.ENABLE);
+
+        employeeMapper.insertEmp(employee);
     }
 
     @Override
@@ -143,19 +135,18 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void editEmp(EmployeeDTO employeeDTO) {
-        try {
+            Long empId = employeeMapper.selectEmpIdByUername(employeeDTO.getUsername());
+            if (empId!=null&&empId!=employeeDTO.getId()){
+                throw new EmployeeUsernameDuplicateException(MessageConstant.EMPLOYEE_USERNAME_DUPLICATE);
+            }
             Employee employee = new Employee();
             BeanUtils.copyProperties(employeeDTO, employee);
-//        employee.setUpdateUser(BaseContext.getCurrentId());
-//        employee.setUpdateTime(LocalDateTime.now());
             employeeMapper.update(employee);
-        } catch (Exception e) {
-            throw new EmployeeUsernameDuplicateException(MessageConstant.EMPLOYEE_USERNAME_DUPLICATE);
-        }
     }
 
     /**
      * 修改密码
+     *
      * @param passwordEditDTO
      */
     @Override
