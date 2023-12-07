@@ -160,7 +160,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             //将新密码MD5加密
             String newPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes());
-            employeeMapper.update(Employee.builder().password(newPassword).build());
+            employeeMapper.update(Employee.builder().id(BaseContext.getCurrentId()).password(newPassword).build());
         }
     }
 
