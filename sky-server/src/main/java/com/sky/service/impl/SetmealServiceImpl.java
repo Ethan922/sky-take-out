@@ -156,4 +156,15 @@ public class SetmealServiceImpl implements SetmealService {
         //删除套餐关联的套餐
         setmealDishMapper.deleteDishesBySetmealId(ids);
     }
+
+    /**
+     * 根据分类id查询套餐
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<Setmeal> getByCategoryId(Long categoryId) {
+        return setmealDishMapper.selectByCategoryId(categoryId);
+
+    }
 }

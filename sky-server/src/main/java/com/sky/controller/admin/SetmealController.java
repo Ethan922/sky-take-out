@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
-@RestController
+@RestController("adminSetmealController")
 @Slf4j
 @RequestMapping("/admin/setmeal")
 public class SetmealController {
