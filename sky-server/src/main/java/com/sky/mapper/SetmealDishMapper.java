@@ -2,6 +2,7 @@ package com.sky.mapper;
 
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.vo.SetmealDishVO;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -54,4 +55,5 @@ public interface SetmealDishMapper {
      */
     @Select("select * from setmeal where category_id=#{categoryId};")
     List<Setmeal> selectByCategoryId(Long categoryId);
+
 }
