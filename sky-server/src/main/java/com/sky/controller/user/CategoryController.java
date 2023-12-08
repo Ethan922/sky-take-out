@@ -19,7 +19,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
     @GetMapping("/list")
-    public Result<List<Category>> getCategoryByType(Integer type){
+    public Result<List<Category>> getCategoriesByType(Integer type){
         log.info("根据type获取分类，type：{}",type);
         List<Category> categories = categoryService.typeQuery(type);
         return Result.success(categories);
