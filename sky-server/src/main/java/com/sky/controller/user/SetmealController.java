@@ -1,10 +1,9 @@
 package com.sky.controller.user;
 
 import com.sky.entity.Setmeal;
-import com.sky.entity.SetmealDish;
 import com.sky.result.Result;
 import com.sky.service.SetmealService;
-import com.sky.vo.SetmealDishVO;
+import com.sky.vo.DishItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController("userSetmealController")
 @Slf4j
@@ -34,9 +32,9 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/dish/{id}")
-    public Result<List<SetmealDishVO>> getDishesBySetmealId(@PathVariable Long id){
+    public Result<List<DishItemVO>> getDishesBySetmealId(@PathVariable Long id){
         log.info("根据套餐id查询包含的菜品,套餐id：{}",id);
-        List<SetmealDishVO> setmealDishVOList = setmealService.selectDishesBySetmealId(id);
-        return Result.success(setmealDishVOList);
+        List<DishItemVO> dishItemVOList = setmealService.selectDishesBySetmealId(id);
+        return Result.success(dishItemVOList);
     }
 }

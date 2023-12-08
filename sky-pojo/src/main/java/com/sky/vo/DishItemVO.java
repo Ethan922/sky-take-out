@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SetmealDishVO {
+public class DishItemVO {
     //份数
     private Integer copies;
     //菜品名称
