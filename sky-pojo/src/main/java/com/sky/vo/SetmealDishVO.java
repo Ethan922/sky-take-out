@@ -10,8 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SetmealDishVO {
+    //份数
     private Integer copies;
+    //菜品名称
     private String name;
+    //菜品描述
     private String description;
+    //菜品图片
     private String image;
 }
