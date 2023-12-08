@@ -6,6 +6,7 @@ import com.sky.service.SetmealService;
 import com.sky.vo.DishItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ public class SetmealController {
     @Autowired
     private SetmealService setmealService;
     @GetMapping("/list")
+    @Cacheable(cacheNames = "setmealCache",key = "#categoryId")
     public Result<List<Setmeal>> getSetmealsByCategoryId(Long categoryId){
         log.info("根据分类id查询套餐，分类id：{}",categoryId);
         List<Setmeal> setmeals = setmealService.getByCategoryIdOfEnable(categoryId);
