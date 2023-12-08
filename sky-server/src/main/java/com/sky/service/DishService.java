@@ -21,6 +21,6 @@ public interface DishService {
     void deleteDishes(Long[] ids);
 
     List<Dish> getByCategoryId(Long id);
-
+    List<DishVO> getByCategoryIdForUser(Long categoryId);
     void changStatus(Integer status,Long id);
 }

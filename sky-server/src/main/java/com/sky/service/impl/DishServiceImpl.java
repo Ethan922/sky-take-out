@@ -160,6 +160,22 @@ public class DishServiceImpl implements DishService {
     }
 
     /**
+     * 用户端根据分类id查询菜品
+     * @param categoryId
+     * @return
+     */
+    public List<DishVO> getByCategoryIdForUser(Long categoryId){
+        List<DishVO> dishes = dishMapper.selectByCategoryIdForUser(categoryId);
+        if (dishes!=null){
+            for (DishVO dish : dishes) {
+                List<DishFlavor> dishFlavors = dishFlavorMapper.selectFlavor(dish.getId());
+                dish.setFlavors(dishFlavors);
+            }
+        }
+        return dishes;
+    }
+
+    /**
      * 停售或启售菜品
      *
      * @param status

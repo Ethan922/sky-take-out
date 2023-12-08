@@ -86,4 +86,12 @@ public interface DishMapper {
      */
     @Select("select count(*) from dish where status=#{status};")
     Integer selectCountOfDishesByStatus(Integer status);
+
+    /**
+     * 用户端根据分类id查询菜品信息
+     * @param categoryId
+     * @return
+     */
+    @Select("select d.*,c.name category_name from dish d left outer join category c on d.category_id = c.id where d.category_id=#{categoryId}")
+    List<DishVO> selectByCategoryIdForUser(Long categoryId);
 }
