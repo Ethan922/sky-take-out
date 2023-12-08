@@ -23,7 +23,7 @@ public class SetmealController {
     @GetMapping("/list")
     public Result<List<Setmeal>> getSetmealsByCategoryId(Long categoryId){
         log.info("根据分类id查询套餐，分类id：{}",categoryId);
-        List<Setmeal> setmeals = setmealService.getByCategoryId(categoryId);
+        List<Setmeal> setmeals = setmealService.getByCategoryIdOfEnable(categoryId);
         return Result.success(setmeals);
     }
 

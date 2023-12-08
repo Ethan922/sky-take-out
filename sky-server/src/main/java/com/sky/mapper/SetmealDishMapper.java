@@ -57,4 +57,7 @@ public interface SetmealDishMapper {
     @Select("select sd.copies,d.name,d.description,d.image from setmeal_dish sd left outer join dish d on sd.dish_id = d.id " +
             "where sd.setmeal_id=#{setmealId}")
     List<DishItemVO> selectDishItemsBySetmealId(Long setmealId);
+
+    @Select("select * from setmeal where category_id=#{categoryId} and status=1;")
+    List<Setmeal> selectByCategoryIdOfEnable(Long categoryId);
 }

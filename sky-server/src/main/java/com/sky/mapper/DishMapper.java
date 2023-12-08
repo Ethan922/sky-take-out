@@ -92,6 +92,6 @@ public interface DishMapper {
      * @param categoryId
      * @return
      */
-    @Select("select d.*,c.name category_name from dish d left outer join category c on d.category_id = c.id where d.category_id=#{categoryId}")
+    @Select("select d.*,c.name category_name from dish d left outer join category c on d.category_id = c.id where d.category_id=#{categoryId} and d.status=1")
     List<DishVO> selectByCategoryIdForUser(Long categoryId);
 }

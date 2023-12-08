@@ -23,12 +23,26 @@
             <if test="type!=null">and type=#{type}</if>
         </where>
     </select>
+
+
     <select id="typeQuery" resultType="com.sky.entity.Category">
         select *
         from category
         <where>
             <if test="type!=null">
                 type=#{type}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="typeQueryOfEnable" resultType="com.sky.entity.Category">
+        select *
+        from category
+        <where>
+            status=1
+            <if test="type!=null">
+                and type=#{type}
             </if>
         </where>
     </select>

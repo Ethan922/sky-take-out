@@ -20,4 +20,6 @@ public interface CategoryService {
     List<Category> typeQuery(Integer type);
 
     void editCategory(CategoryDTO categoryDTO);
+
+    List<Category> typeQueryOfEnable(Integer type);
 }

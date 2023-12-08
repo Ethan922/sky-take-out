@@ -196,4 +196,9 @@ public class SetmealServiceImpl implements SetmealService {
 //        }
 //        return dishItemVOList;
     }
+
+    @Override
+    public List<Setmeal> getByCategoryIdOfEnable(Long categoryId) {
+        return setmealDishMapper.selectByCategoryIdOfEnable(categoryId);
+    }
 }

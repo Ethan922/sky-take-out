@@ -135,4 +135,14 @@ public class CategoryServiceImpl implements CategoryService {
         BeanUtils.copyProperties(categoryDTO, category);
         categoryMapper.update(category);
     }
+
+    /**
+     * 用户端根据类型查询enable状态下的分类
+     * @param type
+     * @return
+     */
+    @Override
+    public List<Category> typeQueryOfEnable(Integer type) {
+        return categoryMapper.typeQueryOfEnable(type);
+    }
 }

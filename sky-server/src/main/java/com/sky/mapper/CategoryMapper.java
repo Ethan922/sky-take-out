@@ -54,4 +54,11 @@ public interface CategoryMapper {
 
     @Select("select id from category where name=#{categoryName};")
     Long selectCategorIdByCategoryName(String categoryName);
+
+    /**
+     * 根据类型查询enable状态的分类
+     * @param type
+     * @return
+     */
+    List<Category> typeQueryOfEnable(Integer type);
 }

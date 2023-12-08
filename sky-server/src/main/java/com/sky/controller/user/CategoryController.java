@@ -21,7 +21,7 @@ public class CategoryController {
     @GetMapping("/list")
     public Result<List<Category>> getCategoriesByType(Integer type){
         log.info("根据type获取分类，type：{}",type);
-        List<Category> categories = categoryService.typeQuery(type);
+        List<Category> categories = categoryService.typeQueryOfEnable(type);
         return Result.success(categories);
     }
 }
