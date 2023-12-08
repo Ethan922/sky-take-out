@@ -28,8 +28,14 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * 用户登录
+     * @param userLoginDTO
+     * @return
+     */
     @PostMapping("/login")
-    public Result<UserLoginVO> userLogin(@RequestBody UserLoginDTO userLoginDTO){
+    public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO){
         log.info("用户登录：{}",userLoginDTO.getCode());
 
         User user = userService.userLogin(userLoginDTO);
@@ -44,6 +50,15 @@ public class UserController {
         UserLoginVO userLoginVO = UserLoginVO.builder().token(token).id(user.getId()).openid(user.getOpenid()).build();
 
         return Result.success(userLoginVO);
+    }
 
+    /**
+     * 用户退出
+     * @return
+     */
+    @PostMapping("/logout")
+    public Result logout(){
+        log.info("用户退出");
+        return Result.success();
     }
 }
