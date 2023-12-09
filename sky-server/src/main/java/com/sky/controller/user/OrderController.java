@@ -54,4 +54,16 @@ public class OrderController {
         PageResult pageResult = orderService.historyOrders(ordersPageQueryDTO);
         return Result.success(pageResult);
     }
+
+    /**
+     * 取消订单
+     * @param id
+     * @return
+     */
+    @PutMapping("/cancel/{id}")
+    public Result cancelOrder(@PathVariable Long id){
+        log.info("取消订单，订单id：{}",id);
+        orderService.cancelOrder(id);
+        return Result.success();
+    }
 }

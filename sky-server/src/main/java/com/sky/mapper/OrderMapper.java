@@ -6,6 +6,7 @@ import com.sky.entity.Orders;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface OrderMapper {
@@ -21,4 +22,10 @@ public interface OrderMapper {
      * @return
      */
     Page<OrderVO> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * 更新订单数据
+     * @param orders
+     */
+    void update(Orders orders);
 }

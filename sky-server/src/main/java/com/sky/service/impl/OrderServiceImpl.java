@@ -128,4 +128,14 @@ public class OrderServiceImpl implements OrderService {
                 .records(page.getResult())
                 .build();
     }
+
+    /**
+     * 取消订单
+     * @param id
+     */
+    @Override
+    public void cancelOrder(Long id) {
+        Orders orders = Orders.builder().status(Orders.CANCELLED).id(id).cancelTime(LocalDateTime.now()).build();
+        orderMapper.update(orders);
+    }
 }
