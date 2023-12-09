@@ -39,7 +39,7 @@ public interface DishMapper {
      * @param id
      * @return
      */
-    @Select("select dish.id, dish.name, dish.category_id, dish.price, dish.image, dish.description, dish.status, dish.update_time, category.name category_name from dish,category where dish.id=#{id} and category_id=category.id;")
+    @Select("select d.*,c.name category_name from dish d,category c where d.id=#{id} and category_id=c.id;")
     DishVO selectById(Long id);
 
     /**
