@@ -25,6 +25,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private DishMapper dishMapper;
     @Autowired
     private SetmealMapper setmealMapper;
+
+    /**
+     * 添加购物车
+     * @param shoppingCartDTO
+     */
     @Override
     public void addShoppingCart(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart=new ShoppingCart();
@@ -57,10 +62,22 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
     }
 
+    /**
+     * 查看购物车
+     * @return
+     */
     @Override
     public List<ShoppingCart> getShoppingCartList() {
         return shoppingCartMapper.selectShoppingCartList(ShoppingCart.builder()
                 .userId(BaseContext.getCurrentId())
                 .build());
+    }
+
+    /**
+     * 清空购物车
+     */
+    @Override
+    public void cleanShoppingCart() {
+        shoppingCartMapper.clean(BaseContext.getCurrentId());
     }
 }
