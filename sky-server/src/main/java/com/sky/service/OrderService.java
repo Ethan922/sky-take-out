@@ -14,4 +14,6 @@ public interface OrderService {
     PageResult historyOrders(OrdersPageQueryDTO ordersPageQueryDTO);
 
     void cancelOrder(Long id);
+
+    void oneMoreOrder(Long id);
 }

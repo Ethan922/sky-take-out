@@ -66,4 +66,16 @@ public class OrderController {
         orderService.cancelOrder(id);
         return Result.success();
     }
+
+    /**
+     * 再来一单
+     * @param id
+     * @return
+     */
+    @PostMapping("/repetition/{id}")
+    public Result oneMoreOrder(@PathVariable Long id){
+        log.info("再来一单，订单id：{}",id);
+        orderService.oneMoreOrder(id);
+        return Result.success();
+    }
 }

@@ -12,9 +12,11 @@ import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.entity.ShoppingCart;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
+import com.sky.result.Result;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
@@ -23,6 +25,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -137,5 +141,39 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Long id) {
         Orders orders = Orders.builder().status(Orders.CANCELLED).id(id).cancelTime(LocalDateTime.now()).build();
         orderMapper.update(orders);
+    }
+
+    /**
+     * 再来一单
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void oneMoreOrder(Long id) {
+        //根据订单id查询订单信息
+        Orders orders = orderMapper.getById(id);
+        //订单不存在抛出异常
+        if (orders==null){
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        //订单存在修改基础信息
+        orders.setOrderTime(LocalDateTime.now());
+        orders.setStatus(Orders.PENDING_PAYMENT);
+        orders.setPayStatus(Orders.UN_PAID);
+        orders.setNumber(String.valueOf(System.currentTimeMillis()));
+        orders.setEstimatedDeliveryTime(LocalDateTime.now().plusHours(1));
+        orders.setCancelTime(null);
+        orders.setCancelReason(null);
+        orders.setRejectionReason(null);
+        orders.setDeliveryTime(null);
+        //重新插入订单信息
+        orderMapper.insert(orders);
+        //查询订单的详细信息
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        for (OrderDetail orderDetail : orderDetailList) {
+            orderDetail.setOrderId(orders.getId());
+        }
+        //重新插入订单的详细信息
+        orderDetailMapper.insertBatch(orderDetailList);
     }
 }
