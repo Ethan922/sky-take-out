@@ -1,6 +1,8 @@
 package com.sky.controller.user;
 
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderSubmitVO;
@@ -29,10 +31,27 @@ public class OrderController {
         return Result.success(orderSubmitVO);
     }
 
+    /**
+     * 查询订单详细信息
+     * @param id
+     * @return
+     */
     @GetMapping("/orderDetail/{id}")
     public Result<OrderVO> getOrderDetailById(@PathVariable Long id){
         log.info("查询顶单详，订单id：{}",id);
         OrderVO orderVO=orderService.getOrderDetailById(id);
         return Result.success(orderVO);
+    }
+
+    /**
+     * 查询历史订单
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    @GetMapping("/historyOrders")
+    public Result<PageResult> historyOrders(OrdersPageQueryDTO ordersPageQueryDTO){
+        log.info("查询历史订单");
+        PageResult pageResult = orderService.historyOrders(ordersPageQueryDTO);
+        return Result.success(pageResult);
     }
 }
