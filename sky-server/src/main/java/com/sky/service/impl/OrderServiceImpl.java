@@ -1,8 +1,11 @@
 package com.sky.service.impl;
 
 import com.fasterxml.jackson.databind.util.BeanUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
@@ -11,6 +14,7 @@ import com.sky.entity.ShoppingCart;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
@@ -98,10 +102,30 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderVO getOrderDetailById(Long id) {
         Orders orders = orderMapper.getById(id);
-        List<OrderDetail> orderDetailList= orderDetailMapper.getByOrderId(id);
-        OrderVO orderVO=new OrderVO();
-        BeanUtils.copyProperties(orders,orderVO);
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders, orderVO);
         orderVO.setOrderDetailList(orderDetailList);
         return orderVO;
+    }
+
+    /**
+     * 查询历史订单
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult historyOrders(OrdersPageQueryDTO ordersPageQueryDTO) {
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+        Page<OrderVO> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        for (OrderVO orderVO : page) {
+            List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orderVO.getId());
+            orderVO.setOrderDetailList(orderDetailList);
+        }
+        return PageResult.builder()
+                .total(page.getTotal())
+                .records(page.getResult())
+                .build();
     }
 }
