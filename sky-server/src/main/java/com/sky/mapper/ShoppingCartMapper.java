@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface ShoppingCartMapper {
 
@@ -21,7 +23,7 @@ public interface ShoppingCartMapper {
      * @param shoppingCart
      * @return
      */
-    ShoppingCart selectByDishIdOrSetmealId(ShoppingCart shoppingCart);
+    List<ShoppingCart> selectShoppingCartList(ShoppingCart shoppingCart);
 
     /**
      * 更新同样的菜品或者套餐的数量

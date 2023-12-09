@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
@@ -29,11 +30,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCart=new ShoppingCart();
         BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
         shoppingCart.setUserId(BaseContext.getCurrentId());
-        ShoppingCart shoppingCartRes = shoppingCartMapper.selectByDishIdOrSetmealId(shoppingCart);
+        List<ShoppingCart> shoppingCartList = shoppingCartMapper.selectShoppingCartList(shoppingCart);
         //购物车中存在同样的商品则数量加1
-        if (shoppingCartRes!=null){
-            shoppingCartRes.setNumber(shoppingCartRes.getNumber()+1);
-            shoppingCartMapper.updateNumber(shoppingCartRes);
+        if (shoppingCartList!=null&&shoppingCartList.size()>0){
+            ShoppingCart cart = shoppingCartList.get(0);
+            cart.setNumber(cart.getNumber()+1);
+            shoppingCartMapper.updateNumber(cart);
         }else {
             Long dishId=shoppingCartDTO.getDishId();
             if (dishId!=null) {
@@ -53,5 +55,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCart.setCreateTime(LocalDateTime.now());
             shoppingCartMapper.insert(shoppingCart);
         }
+    }
+
+    @Override
+    public List<ShoppingCart> getShoppingCartList() {
+        return shoppingCartMapper.selectShoppingCartList(ShoppingCart.builder()
+                .userId(BaseContext.getCurrentId())
+                .build());
     }
 }
