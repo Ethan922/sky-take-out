@@ -33,8 +33,7 @@ public interface ShoppingCartMapper {
 
     /**
      * 清空当前用户下的购物车
-     * @param userId
+     * @param shoppingCart
      */
-    @Delete("delete from shopping_cart where user_id=#{userId};")
-    void clean(Long userId);
+    void delete(ShoppingCart shoppingCart);
 }
