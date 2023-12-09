@@ -22,35 +22,50 @@ public class ShoppingCartContoller {
 
     /**
      * 添加购物车
+     *
      * @param shoppingCartDTO
      * @return
      */
     @PostMapping("/add")
-    public Result addShoppingCart(@RequestBody ShoppingCartDTO shoppingCartDTO){
-        log.info("添加购物车，商品信息为：{}",shoppingCartDTO);
+    public Result addShoppingCart(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        log.info("添加购物车，商品信息为：{}", shoppingCartDTO);
         shoppingCartService.addShoppingCart(shoppingCartDTO);
         return Result.success();
     }
 
     /**
      * 查看购物车
+     *
      * @return
      */
     @GetMapping("/list")
-    public Result<List<ShoppingCart>> getShoppingCartList(){
-        log.info("查看购物车,当前用户id：{}",BaseContext.getCurrentId());
+    public Result<List<ShoppingCart>> getShoppingCartList() {
+        log.info("查看购物车,当前用户id：{}", BaseContext.getCurrentId());
         List<ShoppingCart> shoppingCartList = shoppingCartService.getShoppingCartList();
         return Result.success(shoppingCartList);
     }
 
     /**
      * 清空购物车
+     *
      * @return
      */
     @DeleteMapping("/clean")
-    public Result cleanShopingCart(){
+    public Result cleanShopingCart() {
         log.info("清空购物车,当前用户id：{}", BaseContext.getCurrentId());
         shoppingCartService.cleanShoppingCart();
+        return Result.success();
+    }
+
+    /**
+     * 删除购物车中一个商品
+     *
+     * @return
+     */
+    @PostMapping("/sub")
+    public Result deleteOne(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        log.info("删除购物车中的一个商品,商品信息：{}", shoppingCartDTO);
+        shoppingCartService.deleteOne(shoppingCartDTO);
         return Result.success();
     }
 }
