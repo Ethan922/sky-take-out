@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Service
 @Slf4j
@@ -127,7 +128,16 @@ public class OrderServiceImpl implements OrderService {
         Page<OrderVO> page = orderMapper.pageQuery(ordersPageQueryDTO);
         for (OrderVO orderVO : page) {
             List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orderVO.getId());
+            StringJoiner orderDishes=new StringJoiner("、");
+            for (OrderDetail orderDetail : orderDetailList) {
+                if (orderDetail.getDishFlavor()!=null){
+                    orderDishes.add(orderDetail.getName()+"-"+orderDetail.getDishFlavor());
+                }else {
+                    orderDishes.add(orderDetail.getName());
+                }
+            }
             orderVO.setOrderDetailList(orderDetailList);
+            orderVO.setOrderDishes(orderDishes.toString());
         }
         return PageResult.builder()
                 .total(page.getTotal())
