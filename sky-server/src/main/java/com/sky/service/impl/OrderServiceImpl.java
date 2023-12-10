@@ -245,4 +245,14 @@ public class OrderServiceImpl implements OrderService {
         orders.setCancelReason(ordersRejectionDTO.getRejectionReason());
         orderMapper.update(orders);
     }
+
+    /**
+     * 配送订单
+     * @param id
+     */
+    @Override
+    public void delivery(Long id) {
+        Orders orders = Orders.builder().id(id).status(Orders.DELIVERY_IN_PROGRESS).build();
+        orderMapper.update(orders);
+    }
 }

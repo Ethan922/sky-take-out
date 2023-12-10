@@ -92,4 +92,16 @@ public class OrderController {
         orderService.rejectOrder(ordersRejectionDTO);
         return Result.success();
     }
+
+    /**
+     * 管理端查询订单明细
+     * @param id
+     * @return
+     */
+    @PutMapping("/delivery/{id}")
+    public Result delivery(@PathVariable Long id){
+        log.info("配送订单，订单id：{}",id);
+        orderService.delivery(id);
+        return Result.success();
+    }
 }
