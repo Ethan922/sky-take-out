@@ -255,4 +255,14 @@ public class OrderServiceImpl implements OrderService {
         Orders orders = Orders.builder().id(id).status(Orders.DELIVERY_IN_PROGRESS).build();
         orderMapper.update(orders);
     }
+
+    @Override
+    public void orderComplete(Long id) {
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.COMPLETED)
+                .deliveryTime(LocalDateTime.now())
+                .build();
+        orderMapper.update(orders);
+    }
 }

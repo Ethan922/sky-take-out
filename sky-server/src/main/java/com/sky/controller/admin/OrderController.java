@@ -94,7 +94,7 @@ public class OrderController {
     }
 
     /**
-     * 管理端查询订单明细
+     * 配送订单
      * @param id
      * @return
      */
@@ -104,4 +104,17 @@ public class OrderController {
         orderService.delivery(id);
         return Result.success();
     }
+
+    /**
+     * 订单完成
+     * @param id
+     * @return
+     */
+    @PutMapping("/complete/{id}")
+    public Result orderComplete(@PathVariable Long id){
+        log.info("订单完成，订单id：{}",id);
+        orderService.orderComplete(id);
+        return Result.success();
+    }
+
 }
