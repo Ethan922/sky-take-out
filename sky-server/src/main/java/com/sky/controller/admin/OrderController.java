@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.dto.OrdersCancelDTO;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -65,5 +66,17 @@ public class OrderController {
         log.info("各个状态的订单数量统计");
         OrderStatisticsVO orderStatisticsVO=orderService.getOrderStatistics();
         return Result.success(orderStatisticsVO);
+    }
+
+    /**
+     * 接单
+     * @param ordersConfirmDTO
+     * @return
+     */
+    @PutMapping("/confirm")
+    public Result orderConfirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO){
+        log.info("接单，{}",ordersConfirmDTO);
+        orderService.confirmOrder(ordersConfirmDTO);
+        return Result.success();
     }
 }
