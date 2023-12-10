@@ -119,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
-    public PageResult historyOrders(OrdersPageQueryDTO ordersPageQueryDTO) {
+    public PageResult pageQuery(OrdersPageQueryDTO ordersPageQueryDTO) {
         ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
         Page<OrderVO> page = orderMapper.pageQuery(ordersPageQueryDTO);

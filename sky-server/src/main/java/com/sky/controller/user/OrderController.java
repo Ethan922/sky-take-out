@@ -51,7 +51,7 @@ public class OrderController {
     @GetMapping("/historyOrders")
     public Result<PageResult> historyOrders(OrdersPageQueryDTO ordersPageQueryDTO){
         log.info("查询历史订单");
-        PageResult pageResult = orderService.historyOrders(ordersPageQueryDTO);
+        PageResult pageResult = orderService.pageQuery(ordersPageQueryDTO);
         return Result.success(pageResult);
     }
 
