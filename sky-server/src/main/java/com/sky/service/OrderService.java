@@ -1,5 +1,6 @@
 package com.sky.service;
 
+import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.result.PageResult;
@@ -13,7 +14,7 @@ public interface OrderService {
 
     PageResult pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 
-    void cancelOrder(Long id);
+    void cancelOrder(OrdersCancelDTO ordersCancelDTO);
 
     void oneMoreOrder(Long id);
 }

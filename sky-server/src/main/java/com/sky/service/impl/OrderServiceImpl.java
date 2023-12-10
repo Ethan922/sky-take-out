@@ -5,6 +5,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
@@ -135,11 +136,16 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 取消订单
-     * @param id
+     * @param ordersCancelDTO
      */
     @Override
-    public void cancelOrder(Long id) {
-        Orders orders = Orders.builder().status(Orders.CANCELLED).id(id).cancelTime(LocalDateTime.now()).build();
+    public void cancelOrder(OrdersCancelDTO ordersCancelDTO) {
+        Orders orders = Orders.builder()
+                .status(Orders.CANCELLED)
+                .id(ordersCancelDTO.getId())
+                .cancelReason(ordersCancelDTO.getCancelReason())
+                .cancelTime(LocalDateTime.now())
+                .build();
         orderMapper.update(orders);
     }
 
