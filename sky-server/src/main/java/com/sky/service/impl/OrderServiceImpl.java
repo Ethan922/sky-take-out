@@ -199,17 +199,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderStatisticsVO getOrderStatistics() {
         OrderStatisticsVO orderStatisticsVO=new OrderStatisticsVO();
-        List<Integer> statusList=orderMapper.getAllOrderStatus();
-        if (statusList!=null&&statusList.size()>0) {
+        List<Orders> ordersList = orderMapper.getAllOrders();
+        if (ordersList!=null&&ordersList.size()>0) {
             Integer toBeConfirmedCount=0;
             Integer confirmedCount=0;
             Integer deliveryInProgressCount=0;
-            for (Integer status : statusList) {
-                if (status==Orders.TO_BE_CONFIRMED){
+            for (Orders orders : ordersList) {
+                if (orders.getStatus()==Orders.TO_BE_CONFIRMED){
                     toBeConfirmedCount++;
-                }else if (status==Orders.CONFIRMED){
+                }else if (orders.getStatus()==Orders.CONFIRMED){
                     confirmedCount++;
-                }else if (status==Orders.DELIVERY_IN_PROGRESS){
+                }else if (orders.getStatus()==Orders.DELIVERY_IN_PROGRESS){
                     deliveryInProgressCount++;
                 }
             }
@@ -256,6 +256,10 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
     }
 
+    /**
+     * 完成订单
+     * @param id
+     */
     @Override
     public void orderComplete(Long id) {
         Orders orders = Orders.builder()

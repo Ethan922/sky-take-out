@@ -32,9 +32,9 @@ public interface OrderMapper {
     void update(Orders orders);
 
     /**
-     * 获取所有订单的状态
+     * 获取所有订单
      * @return
      */
-    @Select("select status from orders;")
-    List<Integer> getAllOrderStatus();
+    @Select("select * from orders;")
+    List<Orders> getAllOrders();
 }
