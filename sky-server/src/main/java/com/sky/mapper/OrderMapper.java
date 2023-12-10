@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface OrderMapper {
 
@@ -28,4 +30,11 @@ public interface OrderMapper {
      * @param orders
      */
     void update(Orders orders);
+
+    /**
+     * 获取所有订单的状态
+     * @return
+     */
+    @Select("select status from orders;")
+    List<Integer> getAllOrderStatus();
 }

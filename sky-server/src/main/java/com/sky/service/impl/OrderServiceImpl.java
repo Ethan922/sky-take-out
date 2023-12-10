@@ -19,6 +19,7 @@ import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
@@ -181,5 +182,33 @@ public class OrderServiceImpl implements OrderService {
         }
         //重新插入订单的详细信息
         orderDetailMapper.insertBatch(orderDetailList);
+    }
+
+    /**
+     * 各个状态的订单数量统计
+     * @return
+     */
+    @Override
+    public OrderStatisticsVO getOrderStatistics() {
+        OrderStatisticsVO orderStatisticsVO=new OrderStatisticsVO();
+        List<Integer> statusList=orderMapper.getAllOrderStatus();
+        if (statusList!=null&&statusList.size()>0) {
+            Integer toBeConfirmedCount=0;
+            Integer confirmedCount=0;
+            Integer deliveryInProgressCount=0;
+            for (Integer status : statusList) {
+                if (status==Orders.TO_BE_CONFIRMED){
+                    toBeConfirmedCount++;
+                }else if (status==Orders.CONFIRMED){
+                    confirmedCount++;
+                }else if (status==Orders.DELIVERY_IN_PROGRESS){
+                    deliveryInProgressCount++;
+                }
+            }
+            orderStatisticsVO.setToBeConfirmed(toBeConfirmedCount);
+            orderStatisticsVO.setConfirmed(confirmedCount);
+            orderStatisticsVO.setDeliveryInProgress(deliveryInProgressCount);
+        }
+        return orderStatisticsVO;
     }
 }

@@ -5,6 +5,7 @@ import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,16 @@ public class OrderController {
         log.info("管理取消订单,取消原因：{}",ordersCancelDTO);
         orderService.cancelOrder(ordersCancelDTO);
         return Result.success();
+    }
+
+    /**
+     * 各个状态的订单数量统计
+     * @return
+     */
+    @GetMapping("/statistics")
+    public Result<OrderStatisticsVO> getOrdestatistics(){
+        log.info("各个状态的订单数量统计");
+        OrderStatisticsVO orderStatisticsVO=orderService.getOrderStatistics();
+        return Result.success(orderStatisticsVO);
     }
 }
