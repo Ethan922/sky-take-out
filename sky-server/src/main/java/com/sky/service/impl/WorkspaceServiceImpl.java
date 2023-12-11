@@ -16,6 +16,7 @@ import com.sky.vo.SetmealOverViewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.time.*;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -129,9 +130,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             }
         }
         orderCompletionRate = validOrderCount * 1.0 / orderCount;
+        //格式化平均客单价
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
         //有效订单数为0，则平均客单价设为null
         unitPrice = validOrderCount == 0 ? null : turnover / validOrderCount;
-
+        unitPrice= Double.valueOf(decimalFormat.format(unitPrice));
         //新增用户数
         Integer newUsers = getNewUsers(begin, end);
 
