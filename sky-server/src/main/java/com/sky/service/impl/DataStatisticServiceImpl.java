@@ -47,8 +47,8 @@ public class DataStatisticServiceImpl implements DataStatisticService {
         //指定时间范围内没有订单数据
         if (ordersList == null || ordersList.size() == 0) {
             for (int i = 0; i < dateList.split(",").length; i++) {
-                orderCountList.add(""+0);
-                validOrderCountList.add(""+0);
+                orderCountList.add("" + 0);
+                validOrderCountList.add("" + 0);
             }
             orderReportVO.setDateList(dateList);
             orderReportVO.setOrderCountList(orderCountList.toString());
@@ -68,17 +68,17 @@ public class DataStatisticServiceImpl implements DataStatisticService {
 
         Integer validOrderCountDaily;//每日有效订单数
 
-        Integer totalOrderCount =  ordersList.size();//总订单数
+        Integer totalOrderCount = ordersList.size();//总订单数
 
         Integer totalValidOrderCount = 0;//总有效订单数
         //遍历指定日期范围内的每一天
         while (!begin.isAfter(end)) {
             orderCountDaily = 0;
-            validOrderCountDaily=0;
+            validOrderCountDaily = 0;
             for (Orders orders : ordersList) {
                 Integer status = orders.getStatus();
                 //如果日期大于本日日期，则无需遍历订单列表
-                if (begin.isAfter(LocalDateTime.now())){
+                if (begin.isAfter(LocalDateTime.now())) {
                     break;
                 }
                 //订单的下单时间不在该天的范围内
@@ -91,14 +91,14 @@ public class DataStatisticServiceImpl implements DataStatisticService {
                     validOrderCountDaily++;
                 }
             }
-            totalValidOrderCount+=validOrderCountDaily;
+            totalValidOrderCount += validOrderCountDaily;
             validOrderCountList.add(validOrderCountDaily.toString());
             orderCountList.add(orderCountDaily.toString());
             begin = begin.plusDays(1);
         }
 
 
-        Double orderCompletionRate =  totalValidOrderCount * 1.0 / totalOrderCount;//订单完成率
+        Double orderCompletionRate = totalValidOrderCount * 1.0 / totalOrderCount;//订单完成率
 
         orderReportVO.setOrderCountList(orderCountList.toString());
         orderReportVO.setValidOrderCountList(validOrderCountList.toString());
@@ -115,40 +115,40 @@ public class DataStatisticServiceImpl implements DataStatisticService {
         LocalDateTime begin = dataOverViewQueryDTO.getBegin().atStartOfDay();
         LocalDateTime end = LocalDateTime.of(dataOverViewQueryDTO.getEnd(), LocalTime.MAX);
 
-        TurnoverReportVO turnoverReportVO=new TurnoverReportVO();
+        TurnoverReportVO turnoverReportVO = new TurnoverReportVO();
         //获取指定时间内的订单
         List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin, end);
 
         //日期字符串
         String dateList = getDateRangeString(begin, end);
-        StringJoiner turnoverList=new StringJoiner(",");
+        StringJoiner turnoverList = new StringJoiner(",");
 
         //指定时间范围内没有订单数据
         if (ordersList == null || ordersList.size() == 0) {
             for (int i = 0; i < dateList.split(",").length; i++) {
-                turnoverList.add(""+0.0);
+                turnoverList.add("" + 0.0);
             }
             turnoverReportVO.setDateList(dateList);
             turnoverReportVO.setTurnoverList(turnoverList.toString());
             return turnoverReportVO;
         }
 
-        Double turnoverDaily=0.0;
+        Double turnoverDaily = 0.0;
         //获取指定日期时间内的营业额
         while (!begin.isAfter(end)) {
-            turnoverDaily=0.0;
+            turnoverDaily = 0.0;
             for (Orders orders : ordersList) {
                 Integer status = orders.getStatus();
                 //如果日期大于本日日期，则无需遍历订单列表
-                if (begin.isAfter(LocalDateTime.now())){
+                if (begin.isAfter(LocalDateTime.now())) {
                     break;
                 }
                 //订单的下单时间不在该天的范围内
                 if (orders.getOrderTime().isBefore(begin) || orders.getOrderTime().isAfter(begin.plusDays(1))) {
                     continue;
                 }
-                if (status==Orders.COMPLETED){
-                    turnoverDaily+=orders.getAmount().doubleValue();
+                if (status == Orders.COMPLETED) {
+                    turnoverDaily += orders.getAmount().doubleValue();
                 }
             }
             turnoverList.add(turnoverDaily.toString());
