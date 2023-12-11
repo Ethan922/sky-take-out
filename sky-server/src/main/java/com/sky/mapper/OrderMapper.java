@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -37,4 +38,7 @@ public interface OrderMapper {
      */
     @Select("select * from orders;")
     List<Orders> getAllOrders();
+
+    @Select("select * from orders where order_time between #{begin} and #{end};")
+    List<Orders> getOrdersWithTimeBounds(LocalDateTime begin,LocalDateTime end);
 }

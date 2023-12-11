@@ -3,16 +3,21 @@ package com.sky.service.impl;
 import com.alibaba.druid.sql.visitor.functions.If;
 import com.sky.constant.StatusConstant;
 import com.sky.entity.Orders;
+import com.sky.entity.User;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.SetmealMapper;
+import com.sky.mapper.UserMapper;
 import com.sky.service.WorkspaceService;
+import com.sky.vo.BusinessDataVO;
 import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
 import com.sky.vo.SetmealOverViewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.*;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -20,7 +25,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Autowired
     private OrderMapper orderMapper;
-
+    @Autowired
+    private UserMapper userMapper;
     @Autowired
     private SetmealMapper setmealMapper;
 
@@ -81,5 +87,64 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             orderOverViewVO.setAllOrders(ordersList.size());
         }
         return orderOverViewVO;
+    }
+
+    /**
+     * 统计今日营业数据
+     * @return
+     */
+    @Override
+    public BusinessDataVO getBusinessData() {
+        BusinessDataVO businessDataVO=new BusinessDataVO();
+        LocalDateTime begin=LocalDate.now().atStartOfDay();
+        LocalDateTime end=LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin,end);
+        //数据库中无订单信息
+        if (ordersList==null||ordersList.size()==0){
+            return businessDataVO;
+        }
+        //今日总订单数
+        Integer orderCount=ordersList.size();
+        //有效订单数
+        Integer validOrderCount=0;
+        //营业额
+        Double turnover=0.0;
+        //订单完成率
+        Double orderCompletionRate;
+        //平均客单价
+        Double unitPrice;
+        for (Orders orders : ordersList) {
+            Integer status = orders.getStatus();
+            if (status==Orders.COMPLETED){
+                validOrderCount++;
+                turnover+=orders.getAmount().doubleValue();
+            }
+        }
+        orderCompletionRate= validOrderCount*1.0/orderCount;
+        //有效订单数为0，则平均客单价设为null
+        unitPrice=validOrderCount==0?null:turnover/validOrderCount;
+
+        //新增用户数
+        Integer newUsers=getNewUsers(begin,end);
+
+        businessDataVO.setTurnover(turnover);
+        businessDataVO.setUnitPrice(unitPrice);
+        businessDataVO.setValidOrderCount(validOrderCount);
+        businessDataVO.setOrderCompletionRate(orderCompletionRate);
+        businessDataVO.setNewUsers(newUsers);
+        return businessDataVO;
+    }
+
+    //获取今日新用户数量
+    private Integer getNewUsers(LocalDateTime begin, LocalDateTime end) {
+        List<User> allUsers = userMapper.getAllUsers();
+        Integer newUsers=0;
+        for (User user : allUsers) {
+            LocalDateTime createTime = user.getCreateTime();
+            if (createTime.isAfter(begin)&&createTime.isBefore(end)){
+                newUsers++;
+            }
+        }
+        return newUsers;
     }
 }
