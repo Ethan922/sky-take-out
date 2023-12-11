@@ -39,17 +39,16 @@ public class DataStatisticServiceImpl implements DataStatisticService {
 
 
         //日期字符串
-        StringJoiner dateList = new StringJoiner(",");
+        String dateList = getDateRangeString(begin, end);
         StringJoiner orderCountList = new StringJoiner(",");
         StringJoiner validOrderCountList = new StringJoiner(",");
         //指定时间范围内没有订单数据
         if (ordersList == null || ordersList.size() == 0) {
-            String dateRangeString = getDateRangeString(begin, end);
-            orderReportVO.setDateList(dateRangeString);
-            for (int i = 0; i < dateRangeString.split(",").length; i++) {
+            for (int i = 0; i < dateList.split(",").length; i++) {
                 orderCountList.add(""+0);
                 validOrderCountList.add(""+0);
             }
+            orderReportVO.setDateList(dateList);
             orderReportVO.setOrderCountList(orderCountList.toString());
             orderReportVO.setValidOrderCountList(validOrderCountList.toString());
             orderReportVO.setValidOrderCount(0);
@@ -93,7 +92,6 @@ public class DataStatisticServiceImpl implements DataStatisticService {
             totalValidOrderCount+=validOrderCountDaily;
             validOrderCountList.add(validOrderCountDaily.toString());
             orderCountList.add(orderCountDaily.toString());
-            dateList.add(begin.format(formatter));
             begin = begin.plusDays(1);
         }
 
@@ -105,7 +103,7 @@ public class DataStatisticServiceImpl implements DataStatisticService {
         orderReportVO.setValidOrderCount(totalValidOrderCount);
         orderReportVO.setOrderCompletionRate(orderCompletionRate);
         orderReportVO.setTotalOrderCount(totalOrderCount);
-        orderReportVO.setDateList(dateList.toString());
+        orderReportVO.setDateList(dateList);
         return orderReportVO;
     }
 

@@ -23,10 +23,18 @@ public class DataStatisticController {
 
     @Autowired
     private DataStatisticService dataStatisticService;
+
+    /**
+     * 订单数据统计
+     * @param dataOverViewQueryDTO
+     * @return
+     */
     @GetMapping("/ordersStatistics")
     public Result<OrderReportVO> orderStatistic(DataOverViewQueryDTO dataOverViewQueryDTO){
         log.info("订单数据统计");
         OrderReportVO orderReportVO=dataStatisticService.orderStatistic(dataOverViewQueryDTO);
         return Result.success(orderReportVO);
     }
+
+
 }
