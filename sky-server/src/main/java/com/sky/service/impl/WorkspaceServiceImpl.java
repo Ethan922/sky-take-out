@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WorkspaceServiceImpl implements WorkspaceService {
@@ -35,6 +37,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     /**
      * 统计启售套餐与未启售套餐的数量
+     *
      * @return
      */
     @Override
@@ -46,6 +49,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     /**
      * 统计起售和未启售菜品的数量
+     *
      * @return
      */
     @Override
@@ -61,71 +65,75 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public OrderOverViewVO overviewOrders() {
-        OrderOverViewVO orderOverViewVO=new OrderOverViewVO();
+        OrderOverViewVO orderOverViewVO = new OrderOverViewVO();
         List<Orders> ordersList = orderMapper.getAllOrders();
-        if (ordersList!=null&&ordersList.size()>0){
-            Integer waitingOrders=0;
-            Integer deliveredOrders=0;
-            Integer completedOrders=0;
-            Integer cancelledOrders=0;
+        Integer waitingOrders = 0;
+        Integer deliveredOrders = 0;
+        Integer completedOrders = 0;
+        Integer cancelledOrders = 0;
+        Integer allOrders=0;
+        if (ordersList != null && ordersList.size() > 0) {
+            allOrders=ordersList.size();
             for (Orders orders : ordersList) {
-                Integer status=orders.getStatus();
-                if (status==Orders.TO_BE_CONFIRMED){
+                Integer status = orders.getStatus();
+                if (status == Orders.TO_BE_CONFIRMED) {
                     waitingOrders++;
-                }else if (status==Orders.CONFIRMED){
+                } else if (status == Orders.CONFIRMED) {
                     deliveredOrders++;
-                }else if (status==Orders.COMPLETED){
+                } else if (status == Orders.COMPLETED) {
                     completedOrders++;
-                }else if (status==Orders.CANCELLED){
+                } else if (status == Orders.CANCELLED) {
                     cancelledOrders++;
                 }
             }
-            orderOverViewVO.setCompletedOrders(completedOrders);
-            orderOverViewVO.setCancelledOrders(cancelledOrders);
-            orderOverViewVO.setWaitingOrders(waitingOrders);
-            orderOverViewVO.setDeliveredOrders(deliveredOrders);
-            orderOverViewVO.setAllOrders(ordersList.size());
         }
+        orderOverViewVO.setCompletedOrders(completedOrders);
+        orderOverViewVO.setCancelledOrders(cancelledOrders);
+        orderOverViewVO.setWaitingOrders(waitingOrders);
+        orderOverViewVO.setDeliveredOrders(deliveredOrders);
+        orderOverViewVO.setAllOrders(allOrders);
+
         return orderOverViewVO;
     }
 
     /**
      * 统计今日营业数据
+     *
      * @return
      */
     @Override
     public BusinessDataVO getBusinessData() {
-        BusinessDataVO businessDataVO=new BusinessDataVO();
-        LocalDateTime begin=LocalDate.now().atStartOfDay();
-        LocalDateTime end=LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-        List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin,end);
+        BusinessDataVO businessDataVO = new BusinessDataVO();
+        LocalDateTime begin = LocalDate.now().atStartOfDay();
+        LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin, end);
         //数据库中无订单信息
-        if (ordersList==null||ordersList.size()==0){
+        if (ordersList == null || ordersList.size() == 0) {
             return businessDataVO;
         }
         //今日总订单数
-        Integer orderCount=ordersList.size();
+        Integer orderCount = ordersList.size();
         //有效订单数
-        Integer validOrderCount=0;
+        Integer validOrderCount = 0;
         //营业额
-        Double turnover=0.0;
+        Double turnover = 0.0;
         //订单完成率
         Double orderCompletionRate;
         //平均客单价
         Double unitPrice;
         for (Orders orders : ordersList) {
             Integer status = orders.getStatus();
-            if (status==Orders.COMPLETED){
+            if (status == Orders.COMPLETED) {
                 validOrderCount++;
-                turnover+=orders.getAmount().doubleValue();
+                turnover += orders.getAmount().doubleValue();
             }
         }
-        orderCompletionRate= validOrderCount*1.0/orderCount;
+        orderCompletionRate = validOrderCount * 1.0 / orderCount;
         //有效订单数为0，则平均客单价设为null
-        unitPrice=validOrderCount==0?null:turnover/validOrderCount;
+        unitPrice = validOrderCount == 0 ? null : turnover / validOrderCount;
 
         //新增用户数
-        Integer newUsers=getNewUsers(begin,end);
+        Integer newUsers = getNewUsers(begin, end);
 
         businessDataVO.setTurnover(turnover);
         businessDataVO.setUnitPrice(unitPrice);
@@ -138,10 +146,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     //获取今日新用户数量
     private Integer getNewUsers(LocalDateTime begin, LocalDateTime end) {
         List<User> allUsers = userMapper.getAllUsers();
-        Integer newUsers=0;
+        Integer newUsers = 0;
         for (User user : allUsers) {
             LocalDateTime createTime = user.getCreateTime();
-            if (createTime.isAfter(begin)&&createTime.isBefore(end)){
+            if (createTime.isAfter(begin) && createTime.isBefore(end)) {
                 newUsers++;
             }
         }
