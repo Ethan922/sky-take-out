@@ -7,6 +7,7 @@ import com.sky.service.DataStatisticService;
 import com.sky.service.WorkspaceService;
 import com.sky.vo.BusinessDataVO;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.TurnoverReportVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class DataStatisticServiceImpl implements DataStatisticService {
      */
     @Override
     public OrderReportVO orderStatistic(DataOverViewQueryDTO dataOverViewQueryDTO) {
+        //将LocalDate日期格式转换为LocalDateTime格式
         LocalDateTime begin = dataOverViewQueryDTO.getBegin().atStartOfDay();
         LocalDateTime end = LocalDateTime.of(dataOverViewQueryDTO.getEnd(), LocalTime.MAX);
 
@@ -105,6 +107,57 @@ public class DataStatisticServiceImpl implements DataStatisticService {
         orderReportVO.setTotalOrderCount(totalOrderCount);
         orderReportVO.setDateList(dateList);
         return orderReportVO;
+    }
+
+    @Override
+    public TurnoverReportVO turnoverStatistic(DataOverViewQueryDTO dataOverViewQueryDTO) {
+        //将LocalDate日期格式转换为LocalDateTime格式
+        LocalDateTime begin = dataOverViewQueryDTO.getBegin().atStartOfDay();
+        LocalDateTime end = LocalDateTime.of(dataOverViewQueryDTO.getEnd(), LocalTime.MAX);
+
+        TurnoverReportVO turnoverReportVO=new TurnoverReportVO();
+        //获取指定时间内的订单
+        List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin, end);
+
+        //日期字符串
+        String dateList = getDateRangeString(begin, end);
+        StringJoiner turnoverList=new StringJoiner(",");
+
+        //指定时间范围内没有订单数据
+        if (ordersList == null || ordersList.size() == 0) {
+            for (int i = 0; i < dateList.split(",").length; i++) {
+                turnoverList.add(""+0.0);
+            }
+            turnoverReportVO.setDateList(dateList);
+            turnoverReportVO.setTurnoverList(turnoverList.toString());
+            return turnoverReportVO;
+        }
+
+        Double turnoverDaily=0.0;
+        //获取指定日期时间内的营业额
+        while (!begin.isAfter(end)) {
+            turnoverDaily=0.0;
+            for (Orders orders : ordersList) {
+                Integer status = orders.getStatus();
+                //如果日期大于本日日期，则无需遍历订单列表
+                if (begin.isAfter(LocalDateTime.now())){
+                    break;
+                }
+                //订单的下单时间不在该天的范围内
+                if (orders.getOrderTime().isBefore(begin) || orders.getOrderTime().isAfter(begin.plusDays(1))) {
+                    continue;
+                }
+                if (status==Orders.COMPLETED){
+                    turnoverDaily+=orders.getAmount().doubleValue();
+                }
+            }
+            turnoverList.add(turnoverDaily.toString());
+            begin = begin.plusDays(1);
+        }
+        turnoverReportVO.setTurnoverList(turnoverList.toString());
+        turnoverReportVO.setDateList(dateList);
+
+        return turnoverReportVO;
     }
 
     /**
