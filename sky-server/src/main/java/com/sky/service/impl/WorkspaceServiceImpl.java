@@ -110,6 +110,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin, end);
         //数据库中无订单信息
         if (ordersList == null || ordersList.size() == 0) {
+            businessDataVO.setTurnover(0.0);
+            businessDataVO.setUnitPrice(0.0);
+            businessDataVO.setValidOrderCount(0);
+            businessDataVO.setOrderCompletionRate(0.0);
+            businessDataVO.setNewUsers(0);
             return businessDataVO;
         }
         //今日总订单数
