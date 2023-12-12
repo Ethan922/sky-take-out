@@ -41,4 +41,7 @@ public interface OrderMapper {
 
     @Select("select * from orders where order_time between #{begin} and #{end};")
     List<Orders> getOrdersWithTimeBounds(LocalDateTime begin,LocalDateTime end);
+
+    @Select("select * from orders where number=#{outTradeNo};")
+    Orders getByNumber(String outTradeNo);
 }

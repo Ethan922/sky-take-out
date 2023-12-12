@@ -16,4 +16,7 @@ public interface UserMapper {
 
     @Select("select * from user;")
     List<User> getAllUsers();
+
+    @Select("select * from user where id=#{userId};")
+    User getById(Long userId);
 }
