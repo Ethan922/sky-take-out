@@ -40,4 +40,6 @@ public interface OrderService {
      * @param outTradeNo
      */
     void paySuccess(String outTradeNo);
+
+    void reminder(Long id);
 }

@@ -259,6 +259,11 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public void delivery(Long id) {
+        Orders ordersDB=orderMapper.getById(id);
+        if (ordersDB==null||ordersDB.getStatus()!=Orders.CONFIRMED){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
         Orders orders = Orders.builder().id(id).status(Orders.DELIVERY_IN_PROGRESS).build();
         orderMapper.update(orders);
     }
@@ -269,6 +274,12 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public void orderComplete(Long id) {
+        //查询是否有该订单
+        Orders ordersDB=orderMapper.getById(id);
+        if (ordersDB==null||ordersDB.getStatus()!=Orders.DELIVERY_IN_PROGRESS){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
         Orders orders = Orders.builder()
                 .id(id)
                 .status(Orders.COMPLETED)
@@ -334,6 +345,26 @@ public class OrderServiceImpl implements OrderService {
 
         Map map=new HashMap<>();
         map.put("type",1);
+        map.put("orderId",ordersDB.getId());
+        map.put("content","订单号："+ordersDB.getNumber());
+        String json = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
+    }
+
+    /**
+     * 用户催单
+     * @param id
+     */
+    @Override
+    public void reminder(Long id) {
+        Orders ordersDB = orderMapper.getById(id);
+
+        if (ordersDB==null){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Map map=new HashMap<>();
+        map.put("type",2);
         map.put("orderId",ordersDB.getId());
         map.put("content","订单号："+ordersDB.getNumber());
         String json = JSON.toJSONString(map);
