@@ -28,6 +28,7 @@
                 and order_time between #{beginTime} and #{endTime}
             </if>
         </where>
+        order by order_time desc
     </select>
 
     <update id="update" parameterType="com.sky.entity.Orders">
