@@ -52,4 +52,6 @@ public interface OrderMapper {
     Integer statisticByMap(Map map);
 
     Double getTurnoverByMap(Map map);
+
+    Integer getOrderCountByStatus(Integer status);
 }
