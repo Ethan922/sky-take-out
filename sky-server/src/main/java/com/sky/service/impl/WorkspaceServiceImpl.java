@@ -118,7 +118,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Integer totalOrderCount = getOrderCount(begin, end, null);
         Double orderCompletionRate = totalOrderCount == 0 ? 0.0 : validOrderCount * 1.0 / totalOrderCount;//订单完成率
         Double unitPrice=validOrderCount==0?0.0:turnover/validOrderCount;//平均客单价
-        Integer newUsers=getNewUsers(begin,end);//新增用户数
+        Integer newUsers=getNewUserCount(begin,end);//新增用户数
 
         //保留平均客单价小数点后两位
         DecimalFormat decimalFormat=new DecimalFormat("#.##");
@@ -133,7 +133,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .build();
     }
 
-    private Integer getUserCount(LocalDateTime begin, LocalDateTime end) {
+    private Integer getNewUserCount(LocalDateTime begin, LocalDateTime end) {
         Map map = new HashMap<>();
         map.put("begin", begin);
         map.put("end", end);
@@ -149,16 +149,4 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         return orderMapper.statisticByMap(map);
     }
 
-    //获取今日新用户数量
-    private Integer getNewUsers(LocalDateTime begin, LocalDateTime end) {
-        List<User> allUsers = userMapper.getAllUsers();
-        Integer newUsers = 0;
-        for (User user : allUsers) {
-            LocalDateTime createTime = user.getCreateTime();
-            if (createTime.isAfter(begin) && createTime.isBefore(end)) {
-                newUsers++;
-            }
-        }
-        return newUsers;
-    }
 }
