@@ -5,6 +5,7 @@ import com.sky.result.Result;
 import com.sky.service.DataStatisticService;
 import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
+import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -46,4 +47,12 @@ public class DataStatisticController {
         TurnoverReportVO turnoverReportVO=dataStatisticService.turnoverStatistic(dataOverViewQueryDTO);
         return Result.success(turnoverReportVO);
     }
+
+    @GetMapping("/userStatistics")
+    public Result<UserReportVO> userStatistic(DataOverViewQueryDTO dataOverViewQueryDTO){
+        log.info("营业额数据统计，时间范围：{}",dataOverViewQueryDTO);
+        UserReportVO userReportVO=dataStatisticService.userStatistic(dataOverViewQueryDTO);
+        return Result.success(userReportVO);
+    }
+
 }
