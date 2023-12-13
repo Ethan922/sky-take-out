@@ -14,6 +14,7 @@ import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
 import com.sky.vo.SetmealOverViewVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -67,35 +68,20 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public OrderOverViewVO overviewOrders() {
-        OrderOverViewVO orderOverViewVO = new OrderOverViewVO();
-        List<Orders> ordersList = orderMapper.getAllOrders();
-        Integer waitingOrders = 0;
-        Integer deliveredOrders = 0;
-        Integer completedOrders = 0;
-        Integer cancelledOrders = 0;
-        Integer allOrders = 0;
-        if (ordersList != null && ordersList.size() > 0) {
-            allOrders = ordersList.size();
-            for (Orders orders : ordersList) {
-                Integer status = orders.getStatus();
-                if (Orders.TO_BE_CONFIRMED.equals(status)) {
-                    waitingOrders++;
-                } else if (Orders.CONFIRMED.equals(status)) {
-                    deliveredOrders++;
-                } else if (Orders.COMPLETED.equals(status)) {
-                    completedOrders++;
-                } else if (Orders.CANCELLED.equals(status)) {
-                    cancelledOrders++;
-                }
-            }
-        }
-        orderOverViewVO.setCompletedOrders(completedOrders);
-        orderOverViewVO.setCancelledOrders(cancelledOrders);
-        orderOverViewVO.setWaitingOrders(waitingOrders);
-        orderOverViewVO.setDeliveredOrders(deliveredOrders);
-        orderOverViewVO.setAllOrders(allOrders);
 
-        return orderOverViewVO;
+        Integer waitingOrders = orderMapper.getOrderCountByStatus(Orders.TO_BE_CONFIRMED);
+        Integer deliveredOrders = orderMapper.getOrderCountByStatus(Orders.CONFIRMED);
+        Integer completedOrders = orderMapper.getOrderCountByStatus(Orders.COMPLETED);
+        Integer cancelledOrders = orderMapper.getOrderCountByStatus(Orders.CANCELLED);
+        Integer allOrders = orderMapper.getOrderCountByStatus(null);
+
+        return OrderOverViewVO.builder()
+                .waitingOrders(waitingOrders)
+                .deliveredOrders(deliveredOrders)
+                .completedOrders(completedOrders)
+                .cancelledOrders(cancelledOrders)
+                .allOrders(allOrders)
+                .build();
     }
 
     /**
@@ -119,6 +105,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Double orderCompletionRate = totalOrderCount == 0 ? 0.0 : validOrderCount * 1.0 / totalOrderCount;//订单完成率
         Double unitPrice=validOrderCount==0?0.0:turnover/validOrderCount;//平均客单价
         Integer newUsers=getNewUserCount(begin,end);//新增用户数
+
+        turnover=turnover==null?0:turnover;
 
         //保留平均客单价小数点后两位
         DecimalFormat decimalFormat=new DecimalFormat("#.##");

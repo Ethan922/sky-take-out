@@ -153,14 +153,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void editPasswod(PasswordEditDTO passwordEditDTO) {
         //将旧密码MD5加密
         String oldPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getOldPassword().getBytes());
-        Employee employee = employeeMapper.selectById(BaseContext.getCurrentId());
+        Employee employee = employeeMapper.selectById(BaseContext.getCurrentEmpId());
         if (!employee.getPassword().equals(oldPassword)) {
             //旧密码错误
             throw new PasswordEditFailedException("原密码错误");
         } else {
             //将新密码MD5加密
             String newPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes());
-            employeeMapper.update(Employee.builder().id(BaseContext.getCurrentId()).password(newPassword).build());
+            employeeMapper.update(Employee.builder().id(BaseContext.getCurrentEmpId()).password(newPassword).build());
         }
     }
 

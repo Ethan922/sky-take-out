@@ -7,10 +7,10 @@ sky:
     username: root
     password: 522436
   alioss:
-    endpoint: https://oss-cn-beijing.aliyuncs.com
+    endpoint: oss-cn-beijing.aliyuncs.com
     access-key-id: LTAI5tPtNhA9MA2yS47WfFtV
     access-key-secret: FXVzOCFbv7d6tFDa6Vuu57FZBhLvYo
-    bucket-name: ethan-000-tlias
+    bucket-name: 000sky-take-out
   redis:
     host: 127.0.0.1
     port: 6379

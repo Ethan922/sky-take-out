@@ -34,7 +34,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public void addShoppingCart(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart=new ShoppingCart();
         BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
-        shoppingCart.setUserId(BaseContext.getCurrentId());
+        shoppingCart.setUserId(BaseContext.getCurrentUserId());
         List<ShoppingCart> shoppingCartList = shoppingCartMapper.selectShoppingCartList(shoppingCart);
         //购物车中存在同样的商品则数量加1
         if (shoppingCartList!=null&&shoppingCartList.size()>0){
@@ -69,7 +69,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public List<ShoppingCart> getShoppingCartList() {
         return shoppingCartMapper.selectShoppingCartList(ShoppingCart.builder()
-                .userId(BaseContext.getCurrentId())
+                .userId(BaseContext.getCurrentUserId())
                 .build());
     }
 
@@ -79,7 +79,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void cleanShoppingCart() {
         shoppingCartMapper.delete(ShoppingCart.builder()
-                .userId(BaseContext.getCurrentId())
+                .userId(BaseContext.getCurrentUserId())
                 .build());
     }
 
@@ -99,7 +99,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             cart.setNumber(cart.getNumber()-1);
             shoppingCartMapper.updateNumber(cart);
         }else {
-            shoppingCart.setUserId(BaseContext.getCurrentId());
+            shoppingCart.setUserId(BaseContext.getCurrentUserId());
             shoppingCartMapper.delete(shoppingCart);
         }
 

@@ -40,7 +40,7 @@ public class ShoppingCartContoller {
      */
     @GetMapping("/list")
     public Result<List<ShoppingCart>> getShoppingCartList() {
-        log.info("查看购物车,当前用户id：{}", BaseContext.getCurrentId());
+        log.info("查看购物车,当前用户id：{}", BaseContext.getCurrentUserId());
         List<ShoppingCart> shoppingCartList = shoppingCartService.getShoppingCartList();
         return Result.success(shoppingCartList);
     }
@@ -52,7 +52,7 @@ public class ShoppingCartContoller {
      */
     @DeleteMapping("/clean")
     public Result cleanShopingCart() {
-        log.info("清空购物车,当前用户id：{}", BaseContext.getCurrentId());
+        log.info("清空购物车,当前用户id：{}", BaseContext.getCurrentUserId());
         shoppingCartService.cleanShoppingCart();
         return Result.success();
     }

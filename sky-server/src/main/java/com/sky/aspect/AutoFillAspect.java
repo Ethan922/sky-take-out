@@ -45,7 +45,7 @@ public class AutoFillAspect  {
         Object entity=args[0];
         assert entity!=null;
         LocalDateTime now = LocalDateTime.now();
-        Long currentId = BaseContext.getCurrentId();
+        Long currentId = BaseContext.getCurrentEmpId();
         if (autoFill.value()== OperationType.INSERT){
             try {
                 Method setCreateTime = entity.getClass().getMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);

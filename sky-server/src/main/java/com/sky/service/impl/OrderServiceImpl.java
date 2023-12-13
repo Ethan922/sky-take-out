@@ -56,15 +56,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderSubmitVO submit(OrdersSubmitDTO ordersSubmitDTO) {
-        Long userId = ordersSubmitDTO.getAddressBookId();
+        Long userId = BaseContext.getCurrentUserId();
         //判断收收货地址是否为空，为空抛出异常
-        AddressBook addressBook = addressBookMapper.getById(userId);
+        AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
         if (addressBook == null) {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
         //判断购物车是否为空，为空抛出异常
         List<ShoppingCart> shoppingCartList = shoppingCartMapper.selectShoppingCartList(ShoppingCart.builder()
-                .userId(BaseContext.getCurrentId())
+                .userId(userId)
                 .build());
         if (shoppingCartList == null || shoppingCartList.size() == 0) {
             throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public PageResult pageQuery(OrdersPageQueryDTO ordersPageQueryDTO) {
-        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentUserId());
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
         Page<OrderVO> page = orderMapper.pageQuery(ordersPageQueryDTO);
         for (OrderVO orderVO : page) {

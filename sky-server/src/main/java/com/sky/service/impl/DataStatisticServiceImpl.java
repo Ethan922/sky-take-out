@@ -1,15 +1,13 @@
 package com.sky.service.impl;
 
 import com.sky.dto.DataOverViewQueryDTO;
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.DataStatisticService;
 import com.sky.service.WorkspaceService;
-import com.sky.vo.BusinessDataVO;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.vo.*;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -143,6 +141,33 @@ public class DataStatisticServiceImpl implements DataStatisticService {
                 .dateList(StringUtils.join(dateList,","))
                 .totalUserList(StringUtils.join(totalUserList,","))
                 .newUserList(StringUtils.join(newUserList,","))
+                .build();
+    }
+
+    /**
+     * 获取指定时间范围内销量排行前十的菜品
+     * @param dataOverViewQueryDTO
+     * @return
+     */
+    @Override
+    public SalesTop10ReportVO getTop10Goods(DataOverViewQueryDTO dataOverViewQueryDTO) {
+        LocalDateTime begin=LocalDateTime.of(dataOverViewQueryDTO.getBegin(),LocalTime.MIN);
+        LocalDateTime end=LocalDateTime.of(dataOverViewQueryDTO.getEnd(),LocalTime.MAX);
+
+        List<String> nameList=new ArrayList<>();
+        List<Integer> numberList=new ArrayList<>();
+
+        List<GoodsSalesDTO> goodsSalesDTOList=orderMapper.getTop10(begin,end);
+
+        for (GoodsSalesDTO goodsSalesDTO : goodsSalesDTOList) {
+            nameList.add(goodsSalesDTO.getName());
+            numberList.add(goodsSalesDTO.getNumber());
+        }
+
+
+        return SalesTop10ReportVO.builder()
+                .nameList(StringUtils.join(nameList,","))
+                .numberList(StringUtils.join(numberList,","))
                 .build();
     }
 

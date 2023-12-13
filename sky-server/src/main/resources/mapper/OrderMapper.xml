@@ -82,4 +82,23 @@
             <if test="status!=null">and status=#{status}</if>
         </where>
     </select>
+    <select id="getOrderCountByStatus" resultType="java.lang.Integer">
+        select count(*)
+        from orders
+        <where>
+            <if test="status!=null">status = #{status}</if>
+        </where>
+    </select>
+    <select id="getTop10" resultType="com.sky.dto.GoodsSalesDTO">
+        select od.name,sum(od.number) as number
+        from order_detail od,orders o
+        <where>
+            od.order_id=o.id and o.status=5
+            <if test="begin!=null">and o.order_time &gt; #{begin}</if>
+            <if test="end!=null">and o.order_time &lt; #{end}</if>
+        </where>
+        group by od.name
+        order by 2 desc
+        limit 10;
+    </select>
 </mapper>

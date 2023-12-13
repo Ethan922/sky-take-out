@@ -1,6 +1,8 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.dto.DataOverViewQueryDTO;
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.OrderVO;
@@ -52,4 +54,8 @@ public interface OrderMapper {
     Integer statisticByMap(Map map);
 
     Double getTurnoverByMap(Map map);
+
+    Integer getOrderCountByStatus(Integer status);
+
+    List<GoodsSalesDTO> getTop10(LocalDateTime begin,LocalDateTime end);
 }
