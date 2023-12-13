@@ -8,6 +8,8 @@ import com.sky.service.WorkspaceService;
 import com.sky.vo.BusinessDataVO;
 import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
+import io.netty.util.internal.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,155 +33,90 @@ public class DataStatisticServiceImpl implements DataStatisticService {
      */
     @Override
     public OrderReportVO orderStatistic(DataOverViewQueryDTO dataOverViewQueryDTO) {
-        //将LocalDate日期格式转换为LocalDateTime格式
-        LocalDateTime begin = dataOverViewQueryDTO.getBegin().atStartOfDay();
-        LocalDateTime end = LocalDateTime.of(dataOverViewQueryDTO.getEnd(), LocalTime.MAX);
+        //获取日期列表
+        List<LocalDate> dateList=getDateList(dataOverViewQueryDTO.getBegin(),dataOverViewQueryDTO.getEnd());
+        List<Integer> orderCountList=new ArrayList<>();
+        List<Integer> validOrderCountList=new ArrayList<>();
 
-        OrderReportVO orderReportVO = new OrderReportVO();
-        //获取指定时间内的订单
-        List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin, end);
+        for (LocalDate beginDate : dateList) {
+            //获取当前日期的时间范围
+            LocalDateTime begin=LocalDateTime.of(beginDate,LocalTime.MIN);
+            LocalDateTime end=LocalDateTime.of(beginDate,LocalTime.MAX);
 
+            Integer totalOrderCount=getOrderCount(begin,end,null);
+            Integer validOrderCount=getOrderCount(begin,end,Orders.COMPLETED);
 
-        //日期字符串
-        String dateList = getDateRangeString(begin, end);
-        StringJoiner orderCountList = new StringJoiner(",");
-        StringJoiner validOrderCountList = new StringJoiner(",");
-        //指定时间范围内没有订单数据
-        if (ordersList == null || ordersList.size() == 0) {
-            for (int i = 0; i < dateList.split(",").length; i++) {
-                orderCountList.add("" + 0);
-                validOrderCountList.add("" + 0);
-            }
-            orderReportVO.setDateList(dateList);
-            orderReportVO.setOrderCountList(orderCountList.toString());
-            orderReportVO.setValidOrderCountList(validOrderCountList.toString());
-            orderReportVO.setValidOrderCount(0);
-            orderReportVO.setOrderCompletionRate(0.0);
-            orderReportVO.setTotalOrderCount(0);
-            return orderReportVO;
+            orderCountList.add(totalOrderCount);
+            validOrderCountList.add(validOrderCount);
+
         }
 
+        Integer totalOrderCount=orderCountList.stream().reduce(Integer::sum).get();
+        Integer validOrderCount=validOrderCountList.stream().reduce(Integer::sum).get();
 
-        // 格式化器，定义日期格式
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        Double orderCompletionRate=totalOrderCount==0?0.0:validOrderCount*1.0/totalOrderCount;
 
-        //数据统计
-        Integer orderCountDaily;//每日订单数
-
-        Integer validOrderCountDaily;//每日有效订单数
-
-        Integer totalOrderCount = ordersList.size();//总订单数
-
-        Integer totalValidOrderCount = 0;//总有效订单数
-        //遍历指定日期范围内的每一天
-        while (!begin.isAfter(end)) {
-            orderCountDaily = 0;
-            validOrderCountDaily = 0;
-            for (Orders orders : ordersList) {
-                Integer status = orders.getStatus();
-                //如果日期大于本日日期，则无需遍历订单列表
-                if (begin.isAfter(LocalDateTime.now())) {
-                    break;
-                }
-                //订单的下单时间不在该天的范围内
-                if (orders.getOrderTime().isBefore(begin) || orders.getOrderTime().isAfter(begin.plusDays(1))) {
-                    continue;
-                }
-                orderCountDaily++;
-                //订单的状态为完成则视为有效订单
-                if (Orders.COMPLETED.equals(status)) {
-                    validOrderCountDaily++;
-                }
-            }
-            totalValidOrderCount += validOrderCountDaily;
-            validOrderCountList.add(validOrderCountDaily.toString());
-            orderCountList.add(orderCountDaily.toString());
-            begin = begin.plusDays(1);
-        }
-
-
-        Double orderCompletionRate = totalValidOrderCount * 1.0 / totalOrderCount;//订单完成率
-
-        orderReportVO.setOrderCountList(orderCountList.toString());
-        orderReportVO.setValidOrderCountList(validOrderCountList.toString());
-        orderReportVO.setValidOrderCount(totalValidOrderCount);
-        orderReportVO.setOrderCompletionRate(orderCompletionRate);
-        orderReportVO.setTotalOrderCount(totalOrderCount);
-        orderReportVO.setDateList(dateList);
-        return orderReportVO;
+        return OrderReportVO.builder()
+                .dateList(StringUtils.join(dateList,","))
+                .orderCountList(StringUtils.join(orderCountList,","))
+                .validOrderCountList(StringUtils.join(validOrderCountList,","))
+                .totalOrderCount(totalOrderCount)
+                .validOrderCount(validOrderCount)
+                .orderCompletionRate(orderCompletionRate)
+                .build();
     }
+
+    private Integer getOrderCount(LocalDateTime begin, LocalDateTime end, Integer status) {
+        Map map=new HashMap<>();
+        map.put("begin",begin);
+        map.put("end",end);
+        map.put("status",status);
+        return orderMapper.statisticByMap(map);
+    }
+
 
     @Override
     public TurnoverReportVO turnoverStatistic(DataOverViewQueryDTO dataOverViewQueryDTO) {
-        //将LocalDate日期格式转换为LocalDateTime格式
-        LocalDateTime begin = dataOverViewQueryDTO.getBegin().atStartOfDay();
-        LocalDateTime end = LocalDateTime.of(dataOverViewQueryDTO.getEnd(), LocalTime.MAX);
+        List<LocalDate> dateList=getDateList(dataOverViewQueryDTO.getBegin(),dataOverViewQueryDTO.getEnd());
+        List<Double> turnoverList=new ArrayList<>();
 
-        TurnoverReportVO turnoverReportVO = new TurnoverReportVO();
-        //获取指定时间内的订单
-        List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin, end);
+        for (LocalDate beginDate : dateList) {
+            //获取当前日期的时间范围
+            LocalDateTime begin=LocalDateTime.of(beginDate,LocalTime.MIN);
+            LocalDateTime end=LocalDateTime.of(beginDate,LocalTime.MAX);
 
-        //日期字符串
-        String dateList = getDateRangeString(begin, end);
-        StringJoiner turnoverList = new StringJoiner(",");
+            Map map=new HashMap<>();
+            map.put("begin",begin);
+            map.put("end",end);
+            map.put("status",Orders.COMPLETED);
+            Double turnover=orderMapper.getTurnoverByMap(map);
+            turnover=turnover==null?0.0:turnover;
 
-        //指定时间范围内没有订单数据
-        if (ordersList == null || ordersList.size() == 0) {
-            for (int i = 0; i < dateList.split(",").length; i++) {
-                turnoverList.add("" + 0.0);
-            }
-            turnoverReportVO.setDateList(dateList);
-            turnoverReportVO.setTurnoverList(turnoverList.toString());
-            return turnoverReportVO;
+            turnoverList.add(turnover);
+
         }
 
-        Double turnoverDaily = 0.0;
-        //获取指定日期时间内的营业额
-        while (!begin.isAfter(end)) {
-            turnoverDaily = 0.0;
-            for (Orders orders : ordersList) {
-                Integer status = orders.getStatus();
-                //如果日期大于本日日期，则无需遍历订单列表
-                if (begin.isAfter(LocalDateTime.now())) {
-                    break;
-                }
-                //订单的下单时间不在该天的范围内
-                if (orders.getOrderTime().isBefore(begin) || orders.getOrderTime().isAfter(begin.plusDays(1))) {
-                    continue;
-                }
-                if (Orders.COMPLETED.equals(status)) {
-                    turnoverDaily += orders.getAmount().doubleValue();
-                }
-            }
-            turnoverList.add(turnoverDaily.toString());
-            begin = begin.plusDays(1);
-        }
-        turnoverReportVO.setTurnoverList(turnoverList.toString());
-        turnoverReportVO.setDateList(dateList);
-
-        return turnoverReportVO;
+        return TurnoverReportVO.builder()
+                .dateList(StringUtils.join(dateList,","))
+                .turnoverList(StringUtils.join(turnoverList,","))
+                .build();
     }
 
     /**
-     * 获取指定时间区间内的日期字符
+     * 获取指定时间区间内的日期列表
      *
-     * @param startDate
+     * @param beginDate
      * @param endDate
      * @return
      */
-    private static String getDateRangeString(LocalDateTime startDate, LocalDateTime endDate) {
-        List<String> dateStrings = new ArrayList<>();
-        LocalDateTime currentDate = startDate;
+    private static List<LocalDate> getDateList(LocalDate beginDate, LocalDate endDate) {
+        List<LocalDate> dateList = new ArrayList<>();
 
-        // 格式化器，定义日期格式
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        while (!currentDate.isAfter(endDate)) {
-            dateStrings.add(currentDate.format(formatter));
-            currentDate = currentDate.plusDays(1); // 增加一天
+        while (!beginDate.isAfter(endDate)) {
+            dateList.add(beginDate);
+            beginDate = beginDate.plusDays(1); // 增加一天
         }
 
-        // 使用逗号连接日期字符串
-        return String.join(",", dateStrings);
+        return dateList;
     }
 }
