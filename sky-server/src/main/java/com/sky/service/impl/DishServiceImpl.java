@@ -100,7 +100,7 @@ public class DishServiceImpl implements DishService {
     @Transactional
     public void editDish(DishDTO dishDTO) {
         Long dishId = dishMapper.selectDishIdByDishName(dishDTO.getName());
-        if (dishId!=null&&dishId!=dishDTO.getId()) {
+        if (dishId!=null&& !dishId.equals(dishDTO.getId())) {
             //根据修改的菜品名称查询菜品id，如果菜品id不为空，并且不等于菜品原来的id，说明修改的名称与表中其他菜品的名称重复
             throw new DishNameDuplicateException(MessageConstant.DISH_NAME_DUPLICATE);
         }
@@ -133,7 +133,7 @@ public class DishServiceImpl implements DishService {
         //判断是否是启售菜品
         for (Long id : ids) {
             DishVO dishVO = dishMapper.selectById(id);
-            if (dishVO.getStatus() == StatusConstant.ENABLE) {
+            if (StatusConstant.ENABLE.equals(dishVO.getStatus())) {
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
             }
         }

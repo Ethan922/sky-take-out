@@ -212,11 +212,11 @@ public class OrderServiceImpl implements OrderService {
             Integer confirmedCount=0;
             Integer deliveryInProgressCount=0;
             for (Orders orders : ordersList) {
-                if (orders.getStatus()==Orders.TO_BE_CONFIRMED){
+                if (Orders.TO_BE_CONFIRMED.equals(orders.getStatus())){
                     toBeConfirmedCount++;
-                }else if (orders.getStatus()==Orders.CONFIRMED){
+                }else if (Orders.CONFIRMED.equals(orders.getStatus())){
                     confirmedCount++;
-                }else if (orders.getStatus()==Orders.DELIVERY_IN_PROGRESS){
+                }else if (Orders.DELIVERY_IN_PROGRESS.equals(orders.getStatus())){
                     deliveryInProgressCount++;
                 }
             }
@@ -260,7 +260,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void delivery(Long id) {
         Orders ordersDB=orderMapper.getById(id);
-        if (ordersDB==null||ordersDB.getStatus()!=Orders.CONFIRMED){
+        if (ordersDB==null||!Orders.CONFIRMED.equals(ordersDB.getStatus())){
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
@@ -276,7 +276,7 @@ public class OrderServiceImpl implements OrderService {
     public void orderComplete(Long id) {
         //查询是否有该订单
         Orders ordersDB=orderMapper.getById(id);
-        if (ordersDB==null||ordersDB.getStatus()!=Orders.DELIVERY_IN_PROGRESS){
+        if (ordersDB==null||!Orders.DELIVERY_IN_PROGRESS.equals(ordersDB.getStatus())){
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 

@@ -62,6 +62,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     /**
      * 订单信息总览
+     *
      * @return
      */
     @Override
@@ -72,18 +73,18 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Integer deliveredOrders = 0;
         Integer completedOrders = 0;
         Integer cancelledOrders = 0;
-        Integer allOrders=0;
+        Integer allOrders = 0;
         if (ordersList != null && ordersList.size() > 0) {
-            allOrders=ordersList.size();
+            allOrders = ordersList.size();
             for (Orders orders : ordersList) {
                 Integer status = orders.getStatus();
-                if (status == Orders.TO_BE_CONFIRMED) {
+                if (Orders.TO_BE_CONFIRMED.equals(status)) {
                     waitingOrders++;
-                } else if (status == Orders.CONFIRMED) {
+                } else if (Orders.CONFIRMED.equals(status)) {
                     deliveredOrders++;
-                } else if (status == Orders.COMPLETED) {
+                } else if (Orders.COMPLETED.equals(status)) {
                     completedOrders++;
-                } else if (status == Orders.CANCELLED) {
+                } else if (Orders.CANCELLED.equals(status)) {
                     cancelledOrders++;
                 }
             }
@@ -129,7 +130,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Double unitPrice;
         for (Orders orders : ordersList) {
             Integer status = orders.getStatus();
-            if (status == Orders.COMPLETED) {
+            if (Orders.COMPLETED.equals(status)) {
                 validOrderCount++;
                 turnover += orders.getAmount().doubleValue();
             }
@@ -139,7 +140,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         //有效订单数为0，则平均客单价设为0
         unitPrice = validOrderCount == 0 ? 0.0 : turnover / validOrderCount;
-        unitPrice= Double.valueOf(decimalFormat.format(unitPrice));
+        unitPrice = Double.valueOf(decimalFormat.format(unitPrice));
         //新增用户数
         Integer newUsers = getNewUsers(begin, end);
 

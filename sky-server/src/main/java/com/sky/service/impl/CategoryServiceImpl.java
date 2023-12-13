@@ -128,7 +128,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void editCategory(CategoryDTO categoryDTO) {
         Long categoryId = categoryMapper.selectCategorIdByCategoryName(categoryDTO.getName());
-        if (categoryId != null && categoryId != categoryDTO.getId()) {
+        if (categoryId != null && !categoryId.equals(categoryDTO.getId())) {
             throw new CategoryNameDuplicateException(MessageConstant.CATEGORY_NAME_DUPLICATE);
         }
         Category category = new Category();

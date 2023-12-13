@@ -87,7 +87,7 @@ public class DataStatisticServiceImpl implements DataStatisticService {
                 }
                 orderCountDaily++;
                 //订单的状态为完成则视为有效订单
-                if (status == Orders.COMPLETED) {
+                if (Orders.COMPLETED.equals(status)) {
                     validOrderCountDaily++;
                 }
             }
@@ -147,7 +147,7 @@ public class DataStatisticServiceImpl implements DataStatisticService {
                 if (orders.getOrderTime().isBefore(begin) || orders.getOrderTime().isAfter(begin.plusDays(1))) {
                     continue;
                 }
-                if (status == Orders.COMPLETED) {
+                if (Orders.COMPLETED.equals(status)) {
                     turnoverDaily += orders.getAmount().doubleValue();
                 }
             }

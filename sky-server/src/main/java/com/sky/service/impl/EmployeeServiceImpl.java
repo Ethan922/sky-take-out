@@ -57,7 +57,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
 
-        if (employee.getStatus() == StatusConstant.DISABLE) {
+        if (StatusConstant.DISABLE.equals(employee.getStatus())) {
             //账号被锁定
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
@@ -74,7 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void createEmp(EmployeeDTO employeeDTO) {
         Long empId = employeeMapper.selectEmpIdByUername(employeeDTO.getUsername());
-        if (empId!=null){
+        if (empId != null) {
             throw new EmployeeUsernameDuplicateException(MessageConstant.EMPLOYEE_USERNAME_DUPLICATE);
         }
         Employee employee = new Employee();
@@ -135,13 +135,13 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void editEmp(EmployeeDTO employeeDTO) {
-            Long empId = employeeMapper.selectEmpIdByUername(employeeDTO.getUsername());
-            if (empId!=null&&empId!=employeeDTO.getId()){
-                throw new EmployeeUsernameDuplicateException(MessageConstant.EMPLOYEE_USERNAME_DUPLICATE);
-            }
-            Employee employee = new Employee();
-            BeanUtils.copyProperties(employeeDTO, employee);
-            employeeMapper.update(employee);
+        Long empId = employeeMapper.selectEmpIdByUername(employeeDTO.getUsername());
+        if (empId != null && !empId.equals(employeeDTO.getId())) {
+            throw new EmployeeUsernameDuplicateException(MessageConstant.EMPLOYEE_USERNAME_DUPLICATE);
+        }
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employeeMapper.update(employee);
     }
 
     /**

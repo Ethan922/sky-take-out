@@ -43,23 +43,24 @@ public class SetmealServiceImpl implements SetmealService {
 
     /**
      * 新增套餐信息
+     *
      * @param setmealDTO
      */
     @Override
     @Transactional
     public void createSetmeal(SetmealDTO setmealDTO) {
-        if (setmealMapper.selectSetmealIdBySetmealName(setmealDTO.getName())!=null){
+        if (setmealMapper.selectSetmealIdBySetmealName(setmealDTO.getName()) != null) {
             //根据修改的套餐名查询套餐id，判断是否为空，如果不为空则说明修改的套餐名在数据库中已存在
             throw new SetmealNameDulpicateException(MessageConstant.SETMEAL_NAME_DUPLICATE);
         }
-        Setmeal setmeal=new Setmeal();
-        BeanUtils.copyProperties(setmealDTO,setmeal);
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
         //设置套餐的默认状态为停售
         setmeal.setStatus(StatusConstant.DISABLE);
         //插入套餐的基本信息
         setmealMapper.insert(setmeal);
         //插入套餐包含的菜品信息
-        List<SetmealDish> setmealDishes=setmealDTO.getSetmealDishes();
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
         for (SetmealDish setmealDish : setmealDishes) {
             setmealDish.setSetmealId(setmeal.getId());
         }
@@ -68,6 +69,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     /**
      * 根据套餐id查询套餐信息
+     *
      * @param id
      */
     @Override
@@ -82,34 +84,36 @@ public class SetmealServiceImpl implements SetmealService {
 
     /**
      * 分页查询套餐信息
+     *
      * @param setmealPageQueryDTO
      * @return
      */
     @Override
     public PageResult page(SetmealPageQueryDTO setmealPageQueryDTO) {
-        PageHelper.startPage(setmealPageQueryDTO.getPage(),setmealPageQueryDTO.getPageSize());
+        PageHelper.startPage(setmealPageQueryDTO.getPage(), setmealPageQueryDTO.getPageSize());
         Page<SetmealVO> result = setmealMapper.pageQuery(setmealPageQueryDTO);
         return PageResult.builder().total(result.getTotal()).records(result.getResult()).build();
     }
 
     /**
      * 修改套餐信息
+     *
      * @param setmealVO
      */
     @Override
     @Transactional
     public void editSetmeal(SetmealVO setmealVO) {
         Long id = setmealMapper.selectSetmealIdBySetmealName(setmealVO.getName());
-        if (id!=null&&id!=setmealVO.getId()){
+        if (id != null && !id.equals(setmealVO.getId())) {
             //根据修改的套餐名查询套餐id，判断与原id是否一致，如果不一致则说明修改的套餐名与原套餐名不一致，且在表中已存在
             throw new SetmealNameDulpicateException(MessageConstant.SETMEAL_NAME_DUPLICATE);
         }
         //更新套餐的基本信息（setmeal表）
-        Setmeal setmeal=new Setmeal();
-        BeanUtils.copyProperties(setmealVO,setmeal);
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealVO, setmeal);
         setmealMapper.update(setmeal);
         //先将套餐原来关联的菜品信息删除（setmeal_dish表）
-        Long[] setmealIds={setmealVO.getId()};
+        Long[] setmealIds = {setmealVO.getId()};
         setmealDishMapper.deleteDishesBySetmealId(setmealIds);
         //重新插入套餐关联的菜品信息（setmeal_dish表）
         List<SetmealDish> setmealDishes = setmealVO.getSetmealDishes();
@@ -121,17 +125,18 @@ public class SetmealServiceImpl implements SetmealService {
 
     /**
      * 启售或停售套餐
+     *
      * @param status
      * @param id
      */
     @Override
     public void changstatus(Integer status, Long id) {
         //如果是起售套餐,判断套餐中是否包含未启售的菜品
-        if (status==StatusConstant.ENABLE) {
+        if (StatusConstant.ENABLE.equals(status)) {
             Long[] dishIds = setmealDishMapper.selectDishIdsBySetmealId(id);
             Integer[] dishStatuses = dishMapper.selectStatusByDishIds(dishIds);
             for (Integer dishStatus : dishStatuses) {
-                if (dishStatus==StatusConstant.DISABLE){
+                if (StatusConstant.DISABLE.equals(dishStatus)) {
                     throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
                 }
             }
@@ -142,6 +147,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     /**
      * 批量删除套餐
+     *
      * @param ids
      */
     @Override
@@ -150,7 +156,7 @@ public class SetmealServiceImpl implements SetmealService {
         //判断套餐是否在启售中
         for (Long id : ids) {
             SetmealVO setmealVO = setmealMapper.selectBySetmealId(id);
-            if (setmealVO.getStatus()==StatusConstant.ENABLE){
+            if (StatusConstant.ENABLE.equals(setmealVO.getStatus())) {
                 throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
             }
         }
@@ -162,6 +168,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     /**
      * 根据分类id查询套餐
+     *
      * @param categoryId
      * @return
      */
@@ -173,6 +180,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     /**
      * 根据套餐id查询包含的菜品
+     *
      * @param setmealId
      * @return
      */
