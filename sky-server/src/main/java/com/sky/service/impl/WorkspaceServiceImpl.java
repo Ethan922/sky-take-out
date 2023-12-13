@@ -105,51 +105,48 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public BusinessDataVO getBusinessData() {
-        BusinessDataVO businessDataVO = new BusinessDataVO();
-        LocalDateTime begin = LocalDate.now().atStartOfDay();
+        LocalDateTime begin = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
         LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-        List<Orders> ordersList = orderMapper.getOrdersWithTimeBounds(begin, end);
-        //数据库中无订单信息
-        if (ordersList == null || ordersList.size() == 0) {
-            businessDataVO.setTurnover(0.0);
-            businessDataVO.setUnitPrice(0.0);
-            businessDataVO.setValidOrderCount(0);
-            businessDataVO.setOrderCompletionRate(0.0);
-            businessDataVO.setNewUsers(0);
-            return businessDataVO;
-        }
-        //今日总订单数
-        Integer orderCount = ordersList.size();
-        //有效订单数
-        Integer validOrderCount = 0;
-        //营业额
-        Double turnover = 0.0;
-        //订单完成率
-        Double orderCompletionRate;
-        //平均客单价
-        Double unitPrice;
-        for (Orders orders : ordersList) {
-            Integer status = orders.getStatus();
-            if (Orders.COMPLETED.equals(status)) {
-                validOrderCount++;
-                turnover += orders.getAmount().doubleValue();
-            }
-        }
-        orderCompletionRate = validOrderCount * 1.0 / orderCount;
-        //格式化平均客单价
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        //有效订单数为0，则平均客单价设为0
-        unitPrice = validOrderCount == 0 ? 0.0 : turnover / validOrderCount;
-        unitPrice = Double.valueOf(decimalFormat.format(unitPrice));
-        //新增用户数
-        Integer newUsers = getNewUsers(begin, end);
 
-        businessDataVO.setTurnover(turnover);
-        businessDataVO.setUnitPrice(unitPrice);
-        businessDataVO.setValidOrderCount(validOrderCount);
-        businessDataVO.setOrderCompletionRate(orderCompletionRate);
-        businessDataVO.setNewUsers(newUsers);
-        return businessDataVO;
+        Map map = new HashMap<>();
+        map.put("begin", begin);
+        map.put("end", end);
+        map.put("status", Orders.COMPLETED);
+
+        Double turnover = orderMapper.getTurnoverByMap(map);//营业额
+        Integer validOrderCount = getOrderCount(begin, end, Orders.COMPLETED);//有效订单数
+        Integer totalOrderCount = getOrderCount(begin, end, null);
+        Double orderCompletionRate = totalOrderCount == 0 ? 0.0 : validOrderCount * 1.0 / totalOrderCount;//订单完成率
+        Double unitPrice=validOrderCount==0?0.0:turnover/validOrderCount;//平均客单价
+        Integer newUsers=getNewUsers(begin,end);//新增用户数
+
+        //保留平均客单价小数点后两位
+        DecimalFormat decimalFormat=new DecimalFormat("#.##");
+        unitPrice= Double.valueOf(decimalFormat.format(unitPrice));
+
+        return BusinessDataVO.builder()
+                .unitPrice(unitPrice)
+                .turnover(turnover)
+                .orderCompletionRate(orderCompletionRate)
+                .validOrderCount(validOrderCount)
+                .newUsers(newUsers)
+                .build();
+    }
+
+    private Integer getUserCount(LocalDateTime begin, LocalDateTime end) {
+        Map map = new HashMap<>();
+        map.put("begin", begin);
+        map.put("end", end);
+
+        return userMapper.getUserCountByMap(map);
+    }
+
+    private Integer getOrderCount(LocalDateTime begin, LocalDateTime end, Integer status) {
+        Map map = new HashMap<>();
+        map.put("begin", begin);
+        map.put("end", end);
+        map.put("status", status);
+        return orderMapper.statisticByMap(map);
     }
 
     //获取今日新用户数量
