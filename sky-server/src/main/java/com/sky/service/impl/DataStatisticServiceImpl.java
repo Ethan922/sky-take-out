@@ -10,10 +10,17 @@ import com.sky.service.WorkspaceService;
 import com.sky.vo.*;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,6 +34,8 @@ public class DataStatisticServiceImpl implements DataStatisticService {
     private OrderMapper orderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private WorkspaceService workspaceService;
 
     /**
      * 订单数据统计
@@ -69,14 +78,7 @@ public class DataStatisticServiceImpl implements DataStatisticService {
                 .build();
     }
 
-    /**
-     * 营业额数据统计
-     *
-     * @param begin
-     * @param end
-     * @param status
-     * @return
-     */
+
     private Integer getOrderCount(LocalDateTime begin, LocalDateTime end, Integer status) {
         Map map = new HashMap<>();
         map.put("begin", begin);
@@ -86,6 +88,11 @@ public class DataStatisticServiceImpl implements DataStatisticService {
     }
 
 
+    /**
+     * 营业额数据统计
+     * @param dataOverViewQueryDTO
+     * @return
+     */
     @Override
     public TurnoverReportVO turnoverStatistic(DataOverViewQueryDTO dataOverViewQueryDTO) {
         List<LocalDate> dateList = getDateList(dataOverViewQueryDTO.getBegin(), dataOverViewQueryDTO.getEnd());
@@ -169,6 +176,59 @@ public class DataStatisticServiceImpl implements DataStatisticService {
                 .nameList(StringUtils.join(nameList,","))
                 .numberList(StringUtils.join(numberList,","))
                 .build();
+    }
+
+    /**
+     * 导出Excel报表
+     * @param response
+     */
+    @Override
+    public void export(HttpServletResponse response) throws IOException {
+        //读取模板表
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("template\\运营数据报表模板.xlsx");
+        XSSFWorkbook xssfWorkbook=new XSSFWorkbook(is);
+
+        //指定时间
+        LocalDate begin=LocalDate.now().minusDays(30);
+        LocalDate end=LocalDate.now().minusDays(1);
+
+
+        //创建表单
+        XSSFSheet sheet = xssfWorkbook.getSheet("Sheet1");
+
+        //填入时间区间
+        XSSFRow row = sheet.getRow(1);
+        row.getCell(1).setCellValue("时间:"+begin+"至"+end);
+
+        //获取运营数据
+        BusinessDataVO businessDataVO = workspaceService.getBusinessData(LocalDateTime.of(begin, LocalTime.MIN), LocalDateTime.of(end, LocalTime.MAX));
+
+        //填入概览数据
+        row=sheet.getRow(3);
+        row.getCell(2).setCellValue(businessDataVO.getTurnover());
+        row.getCell(4).setCellValue(businessDataVO.getOrderCompletionRate());
+        row.getCell(6).setCellValue(businessDataVO.getNewUsers());
+        row=sheet.getRow(4);
+        row.getCell(2).setCellValue(businessDataVO.getValidOrderCount());
+        row.getCell(4).setCellValue(businessDataVO.getUnitPrice());
+
+        for (int i = 0; i < 30; i++) {
+            row=sheet.getRow(7+i);
+            LocalDate date=begin.plusDays(i);
+            BusinessDataVO businessData = workspaceService.getBusinessData(LocalDateTime.of(date, LocalTime.MIN), LocalDateTime.of(date, LocalTime.MAX));
+            row.getCell(1).setCellValue(date.toString());
+            row.getCell(2).setCellValue(businessData.getTurnover());
+            row.getCell(3).setCellValue(businessData.getValidOrderCount());
+            row.getCell(4).setCellValue(businessData.getOrderCompletionRate());
+            row.getCell(5).setCellValue(businessData.getUnitPrice());
+            row.getCell(6).setCellValue(businessData.getNewUsers());
+        }
+
+        //将文件写入响应输出流
+        xssfWorkbook.write(response.getOutputStream());
+
+        is.close();
+        xssfWorkbook.close();
     }
 
     private Integer getUserCount(LocalDateTime begin, LocalDateTime end) {

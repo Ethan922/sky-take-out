@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/admin/report")
@@ -63,6 +66,11 @@ public class DataStatisticController {
         return Result.success(userReportVO);
     }
 
+    /**
+     * 获取销量前十的商品名称
+     * @param dataOverViewQueryDTO
+     * @return
+     */
     @GetMapping("/top10")
     public Result<SalesTop10ReportVO> getTop10Dishes(DataOverViewQueryDTO dataOverViewQueryDTO){
         log.info("获取销量排行前十的菜品，时间范围：{}", dataOverViewQueryDTO);
@@ -70,4 +78,14 @@ public class DataStatisticController {
         return Result.success(salesTop10ReportVO);
     }
 
+    /**
+     * 导出Excel报表
+     * @param response
+     * @return
+     */
+    @GetMapping("/export")
+    public Result export(HttpServletResponse response) throws IOException {
+        dataStatisticService.export(response);
+        return Result.success();
+    }
 }
