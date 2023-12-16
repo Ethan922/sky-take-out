@@ -32,6 +32,7 @@
         <poi>3.16</poi>
         <devtools>2.0.4.RELEASE</devtools>
         <junit>3.8.2</junit>
+        <mybatisplus>3.5.3.1</mybatisplus>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -46,6 +47,12 @@
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.spring}</version>
             </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatisplus}</version>
+            </dependency>
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
